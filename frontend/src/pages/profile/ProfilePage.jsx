@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 import { useThemeStore } from "@/store/theme.store";
-import { useProfileStore } from "@/store/profile.store";
+import { useProfileStore, DEFAULT_PROFILE } from "@/store/profile.store";
 
 /* ─── tabs ────────────────────────────────────────────────────── */
 const TABS = [
@@ -696,8 +696,11 @@ const ACTIVITY = [
 export default function ProfilePage() {
   const { user }                       = useAuthStore();
   const { theme, setTheme }            = useThemeStore();
-  const { avatar, setAvatar, bio, setBio, skills, addSkill, removeSkill,
-          resumeFileName, resumeData, setResume, clearResume } = useProfileStore();
+  const { setAvatar, setBio, addSkill, removeSkill, setResume, clearResume } = useProfileStore();
+  const uid = user?.id;
+  // Read this user's profile slice — falls back to defaults so other users' data is never shown
+  const { avatar, bio, skills, resumeFileName, resumeData } =
+    useProfileStore((s) => s._profiles[uid] ?? DEFAULT_PROFILE);
 
   const [tab, setTab]                  = useState("overview");
   const [editingBio, setEditingBio]    = useState(false);
@@ -737,18 +740,18 @@ export default function ProfilePage() {
   const handleAvatar = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const r = new FileReader(); r.onload = (ev) => setAvatar(ev.target.result); r.readAsDataURL(file);
+    const r = new FileReader(); r.onload = (ev) => setAvatar(uid, ev.target.result); r.readAsDataURL(file);
   };
   const handleResume = (file) => {
     if (!file) return;
-    const r = new FileReader(); r.onload = (ev) => setResume(file.name, ev.target.result); r.readAsDataURL(file);
+    const r = new FileReader(); r.onload = (ev) => setResume(uid, file.name, ev.target.result); r.readAsDataURL(file);
   };
   const handleAddSkill = (e) => {
     e?.preventDefault();
     const sk = skillInput.trim();
-    if (sk && !skills.includes(sk)) { addSkill(sk); setSkillInput(""); }
+    if (sk && !skills.includes(sk)) { addSkill(uid, sk); setSkillInput(""); }
   };
-  const saveBio = () => { setBio(bioInput); setEditingBio(false); setBioSaved(true); setTimeout(() => setBioSaved(false), 2200); };
+  const saveBio = () => { setBio(uid, bioInput); setEditingBio(false); setBioSaved(true); setTimeout(() => setBioSaved(false), 2200); };
   const saveEdit = () => { setEditSaved(true); setTimeout(() => setEditSaved(false), 2200); };
   const setPref = (k, v) => setPrefs((p) => ({ ...p, [k]: v }));
   const ef = (k) => (e) => setEditForm((p) => ({ ...p, [k]: e.target.value }));
@@ -1266,7 +1269,7 @@ export default function ProfilePage() {
                   <div className="flex flex-wrap gap-2">
                     {SKILL_SUGGESTIONS.filter((s) => !skills.includes(s)).slice(0,10).map((s) => (
                       <motion.button key={s} whileHover={{ scale:1.04 }} whileTap={{ scale:0.96 }}
-                        onClick={() => addSkill(s)}
+                        onClick={() => addSkill(uid, s)}
                         className="px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all"
                         style={S.subRow}
                         onMouseEnter={(e) => { e.currentTarget.style.borderColor="#2563EB"; e.currentTarget.style.color="#2563EB"; }}
@@ -1282,7 +1285,7 @@ export default function ProfilePage() {
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-xs" style={S.fieldLabel}>{skills.length} skill{skills.length!==1?"s":""} added</p>
                     <motion.button whileHover={{ scale:1.04 }} whileTap={{ scale:0.96 }}
-                      onClick={() => skills.slice().forEach(removeSkill)}
+                      onClick={() => skills.slice().forEach((sk) => removeSkill(uid, sk))}
                       className="text-xs flex items-center gap-1 transition-all" style={{ color:"#EF4444" }}>
                       <Trash2 className="h-3 w-3"/>Clear all
                     </motion.button>
@@ -1308,7 +1311,7 @@ export default function ProfilePage() {
                           style={{ background:"linear-gradient(135deg,rgba(37,99,235,0.1),rgba(16,185,129,0.07))", border:"1px solid rgba(37,99,235,0.2)", color:"#2563EB" }}
                         >
                           {skill}
-                          <button onClick={() => removeSkill(skill)}
+                          <button onClick={() => removeSkill(uid, skill)}
                             className="w-4 h-4 rounded-full flex items-center justify-center transition-all hover:bg-red-100"
                             style={{ color:"#94A3B8" }}>
                             <X className="h-3 w-3"/>
@@ -1443,7 +1446,7 @@ export default function ProfilePage() {
                         </a>
                       )}
                       <motion.button whileHover={{ scale:1.08 }} whileTap={{ scale:0.92 }}
-                        onClick={(e) => { e.stopPropagation(); clearResume(); }}
+                        onClick={(e) => { e.stopPropagation(); clearResume(uid); }}
                         className="p-2 rounded-xl transition-all" style={{ color:"#EF4444" }}
                         onMouseEnter={(e) => e.currentTarget.style.background="rgba(239,68,68,0.1)"}
                         onMouseLeave={(e) => e.currentTarget.style.background="transparent"}>

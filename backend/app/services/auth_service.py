@@ -1,5 +1,7 @@
+import json
+import random
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import Session
 from app.core.security import (
     verify_password, get_password_hash, create_access_token,
@@ -60,14 +62,35 @@ class AuthService:
         return {"access_token": access, "refresh_token": new_refresh, "token_type": "bearer"}
 
     def forgot_password(self, email: str):
-        """Returns (token, full_name) if user exists, else (None, None)."""
+        """Generates a 6-digit OTP valid for 5 minutes. Returns (otp, full_name) or (None, None)."""
         user = self.repo.get_by_email(email)
         if not user:
             return None, None
-        token = create_reset_token(email)
-        user.password_reset_token = token
+        otp = str(random.randint(100000, 999999))
+        expires_at = (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
+        user.password_reset_token = json.dumps({"otp": otp, "expires": expires_at})
         self.db.commit()
-        return token, user.full_name
+        return otp, user.full_name
+
+    def verify_otp_and_reset(self, email: str, otp: str, new_password: str) -> None:
+        """Verifies the 6-digit OTP and resets the password if valid."""
+        user = self.repo.get_by_email(email)
+        if not user or not user.password_reset_token:
+            raise ValidationException("Invalid or expired OTP")
+        try:
+            data = json.loads(user.password_reset_token)
+        except Exception:
+            raise ValidationException("Invalid or expired OTP")
+        if data.get("otp") != otp:
+            raise ValidationException("Incorrect OTP. Please try again.")
+        expires = datetime.fromisoformat(data["expires"])
+        if datetime.now(timezone.utc) > expires:
+            user.password_reset_token = None
+            self.db.commit()
+            raise ValidationException("OTP has expired. Please request a new one.")
+        user.password_hash = get_password_hash(new_password)
+        user.password_reset_token = None
+        self.db.commit()
 
     def reset_password(self, token: str, new_password: str) -> None:
         payload = decode_token(token)

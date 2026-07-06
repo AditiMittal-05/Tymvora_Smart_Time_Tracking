@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Shield, Search, Filter, Clock } from "lucide-react";
+import { Shield } from "lucide-react";
 import { format } from "date-fns";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,49 +49,23 @@ export function AuditLogsPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #D97706, #B45309)" }}>
-              <Shield className="h-4 w-4 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-text-primary tracking-tight">Audit Logs</h1>
+      {/* Header with inline filter */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{ background: "linear-gradient(135deg, #D97706, #B45309)" }}>
+            <Shield className="h-4 w-4 text-white" />
           </div>
-          <p className="text-text-secondary text-sm mt-0.5">
-            Immutable record of all system actions — visible to Super Admin only
-          </p>
+          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Audit Logs</h1>
         </div>
+        <Select value={entityType || "all"} onValueChange={(v) => { setEntityType(v === "all" ? "" : v); setPage(1); }}>
+          <SelectTrigger className="w-36 h-8 text-sm"><SelectValue placeholder="All Types" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            {ENTITY_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </div>
-
-      {/* Stats banner */}
-      <div className="rounded-xl border p-4 flex items-center gap-4"
-        style={{ background: "rgba(217,119,6,0.04)", borderColor: "rgba(217,119,6,0.15)" }}>
-        <Clock className="h-5 w-5 flex-shrink-0" style={{ color: "#D97706" }} />
-        <p className="text-sm text-text-secondary">
-          Total records: <span className="font-semibold text-text-primary">{data?.total ?? "—"}</span>
-          {" "}· Showing newest first · All times UTC
-        </p>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-sm text-text-secondary">
-              <Filter className="h-4 w-4" /> Filter by:
-            </div>
-            <Select value={entityType || "all"} onValueChange={(v) => { setEntityType(v === "all" ? "" : v); setPage(1); }}>
-              <SelectTrigger className="w-40"><SelectValue placeholder="Entity Type" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                {ENTITY_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Table */}
       <Card>

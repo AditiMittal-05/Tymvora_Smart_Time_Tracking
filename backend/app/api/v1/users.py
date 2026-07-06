@@ -1,11 +1,12 @@
 import math
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import Optional
-
+from pydantic import BaseModel as _BM
 from app.database.session import get_db
 from app.api.deps import get_current_active_user
 from app.core.permissions import require_super_admin
+from app.services.email_service import send_welcome_email
 from app.schemas.user import (
     UserCreate, UserUpdate, UserResponse, UserDropdown,
     UserManagerUpdate, UserApproverToggle, OrgNodeResponse,
@@ -28,7 +29,7 @@ def list_users(
     db: Session = Depends(get_db),
 ):
     items, total = UserService(db).search(
-        search, role, status, page, page_size, exclude_super_admin=True
+        search, role, status, page, page_size, exclude_super_admin=False
     )
     return PaginatedResponse(
         items=[UserResponse.model_validate(u) for u in items],
@@ -42,10 +43,12 @@ def list_users(
 @router.post("", response_model=UserResponse, status_code=201)
 def create_user(
     body: UserCreate,
+    background_tasks: BackgroundTasks,
     current_user=Depends(require_super_admin()),
     db: Session = Depends(get_db),
 ):
-    user, _ = UserService(db).create(body, created_by=current_user.id, actor_role=current_user.role)
+    user, password = UserService(db).create(body, created_by=current_user.id, actor_role=current_user.role)
+    background_tasks.add_task(send_welcome_email, user.email, user.full_name, password)
     return UserResponse.model_validate(user)
 
 
@@ -145,3 +148,28 @@ def activate_user(
 ):
     UserService(db).toggle_status(user_id, UserStatus.ACTIVE, updated_by=current_user.id)
     return {"message": "User activated"}
+
+
+class ProjectAssignmentBody(_BM):
+    project_ids: list[int]
+
+
+@router.get("/{user_id}/projects")
+def get_user_projects(
+    user_id: int,
+    current_user=Depends(require_super_admin()),
+    db: Session = Depends(get_db),
+):
+    user = UserService(db).get_detail(user_id)
+    return [{"id": p.id, "project_name": p.project_name, "project_code": p.project_code} for p in user.assigned_projects]
+
+
+@router.post("/{user_id}/projects")
+def assign_projects(
+    user_id: int,
+    body: ProjectAssignmentBody,
+    current_user=Depends(require_super_admin()),
+    db: Session = Depends(get_db),
+):
+    UserService(db).assign_projects(user_id, body.project_ids, updated_by=current_user.id)
+    return {"message": "Projects assigned successfully"}

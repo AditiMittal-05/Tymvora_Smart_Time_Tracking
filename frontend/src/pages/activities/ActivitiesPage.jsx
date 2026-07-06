@@ -57,58 +57,68 @@ export function ActivitiesPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">Activity Management</h1>
-          <p className="text-text-secondary text-sm mt-0.5">Manage timesheet activity types</p>
-        </div>
-        <Button onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> Add Activity</Button>
-      </div>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
-            <Input placeholder="Search activities..." className="pl-9" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold text-text-primary flex-shrink-0">Activity Management</h1>
+        <div className="flex items-center gap-2">
+          <div className="relative w-48">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-secondary pointer-events-none" />
+            <Input placeholder="Search activities..." className="pl-8 h-8 text-sm" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
           </div>
-        </CardContent>
-      </Card>
+          <Button size="sm" onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> Add Activity</Button>
+        </div>
+      </div>
 
       <Card>
         <CardContent className="p-0">
           {isLoading ? <div className="p-6"><SkeletonTable /></div> : (
-            <table className="enterprise-table w-full">
-              <thead>
-                <tr>
-                  {["Code", "Activity Name", "Category", "Billable", "Status", "Actions"].map((h) => (
-                    <th key={h}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {(data?.items || []).map((act) => (
-                  <tr key={act.id}>
-                    <td className="text-sm font-mono text-text-secondary">{act.activity_code}</td>
-                    <td className="text-sm font-medium text-text-primary">{act.activity_name}</td>
-                    <td className="text-sm text-text-secondary capitalize">{act.category || "—"}</td>
-                    <td>
-                      <Badge variant={act.is_billable ? "success" : "outline"}>{act.is_billable ? "Billable" : "Non-billable"}</Badge>
-                    </td>
-                    <td>
-                      <Badge variant={act.status === "active" ? "success" : "destructive"} className="capitalize">{act.status}</Badge>
-                    </td>
-                    <td>
-                      <div className="flex gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => setEditActivity(act)}><Edit className="h-4 w-4" /></Button>
-                        <Button size="icon" variant="ghost" onClick={() => toggleMutation.mutate({ id: act.id, active: act.status === "inactive" })} title={act.status === "active" ? "Deactivate" : "Activate"}>
-                          {act.status === "active" ? <ToggleRight className="h-4 w-4 text-secondary" /> : <ToggleLeft className="h-4 w-4 text-text-secondary" />}
-                        </Button>
-                      </div>
-                    </td>
+            <>
+              <table className="enterprise-table w-full">
+                <thead>
+                  <tr>
+                    {["Code", "Activity Name", "Category", "Billable", "Status", "Actions"].map((h) => (
+                      <th key={h}>{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {(data?.items || []).length === 0 ? (
+                    <tr><td colSpan={6} className="py-12 text-center text-text-secondary text-sm">No activities found</td></tr>
+                  ) : (data?.items || []).map((act) => (
+                    <tr key={act.id}>
+                      <td className="text-sm font-mono text-text-secondary">{act.activity_code}</td>
+                      <td className="text-sm font-medium text-text-primary">{act.activity_name}</td>
+                      <td className="text-sm text-text-secondary capitalize">{act.category || "—"}</td>
+                      <td>
+                        <Badge variant={act.is_billable ? "success" : "outline"}>{act.is_billable ? "Billable" : "Non-billable"}</Badge>
+                      </td>
+                      <td>
+                        <Badge variant={act.status === "active" ? "success" : "destructive"} className="capitalize">{act.status}</Badge>
+                      </td>
+                      <td>
+                        <div className="flex gap-1">
+                          <Button size="icon" variant="ghost" onClick={() => setEditActivity(act)}><Edit className="h-4 w-4" /></Button>
+                          <Button size="icon" variant="ghost" onClick={() => toggleMutation.mutate({ id: act.id, active: act.status === "inactive" })} title={act.status === "active" ? "Deactivate" : "Activate"}>
+                            {act.status === "active" ? <ToggleRight className="h-4 w-4 text-secondary" /> : <ToggleLeft className="h-4 w-4 text-text-secondary" />}
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {data && data.total > 20 && (
+                <div className="flex items-center justify-between px-5 py-3.5 border-t border-border-color">
+                  <p className="text-sm text-text-secondary">
+                    Showing <span className="font-semibold text-text-primary">{(page - 1) * 20 + 1}–{Math.min(page * 20, data.total)}</span> of{" "}
+                    <span className="font-semibold text-text-primary">{data.total}</span>
+                  </p>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>Previous</Button>
+                    <Button size="sm" variant="outline" disabled={page * 20 >= data.total} onClick={() => setPage((p) => p + 1)}>Next</Button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>

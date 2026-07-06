@@ -22,7 +22,7 @@ const MONTHS = [
 
 export function ReportsPage() {
   const [tab, setTab] = useState("daily");
-  const isAdmin = useAuthStore((s) => s.user?.role === "admin");
+  const isAdmin = useAuthStore((s) => s.user?.role === "super_admin");
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
 

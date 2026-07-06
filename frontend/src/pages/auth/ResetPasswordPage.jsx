@@ -12,9 +12,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authService } from "@/services/auth.service";
 import { useToast } from "@/hooks/use-toast";
+import { PasswordStrengthBar } from "@/components/shared/PasswordStrengthBar";
 
 const schema = z.object({
-  new_password: z.string().min(8, "Password must be at least 8 characters"),
+  new_password: z
+    .string()
+    .min(8, "At least 8 characters")
+    .regex(/[A-Z]/, "Must contain an uppercase letter")
+    .regex(/[a-z]/, "Must contain a lowercase letter")
+    .regex(/[0-9]/, "Must contain a number")
+    .regex(/[^A-Za-z0-9]/, "Must contain a special character"),
   confirm: z.string(),
 }).refine((d) => d.new_password === d.confirm, { message: "Passwords don't match", path: ["confirm"] });
 
@@ -25,7 +32,8 @@ export function ResetPasswordPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(schema) });
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({ resolver: zodResolver(schema) });
+  const watchedPw = watch("new_password", "");
 
   const mutation = useMutation({
     mutationFn: (data) => authService.resetPassword(token, data.new_password),
@@ -58,12 +66,22 @@ export function ResetPasswordPage() {
         <div className="space-y-1.5">
           <Label>New Password</Label>
           <div className="relative">
-            <Input type={showPw ? "text" : "password"} placeholder="Min. 8 characters" className="pr-10" {...register("new_password")} />
-            <button type="button" onClick={() => setShowPw((p) => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors p-0.5">
+            <Input
+              type={showPw ? "text" : "password"}
+              placeholder="Min. 8 characters"
+              className="pr-10"
+              {...register("new_password")}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPw((p) => !p)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors p-0.5"
+            >
               {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
           {errors.new_password && <p className="text-xs text-danger">{errors.new_password.message}</p>}
+          <PasswordStrengthBar password={watchedPw} />
         </div>
 
         <div className="space-y-1.5">

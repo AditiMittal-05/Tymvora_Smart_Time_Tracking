@@ -74,3 +74,10 @@ class ApproverDashboard(BaseModel):
     dept_hours: List[ChartDataPoint]
     pending_approvals: List[PendingItem]
     monthly_hours_chart: List[ChartDataPoint]
+    monthly_status_chart: List[ChartDataPoint] = []
+    weekly_status_chart: List[ChartDataPoint] = []
+    weekly_approved: int = 0
+    weekly_rejected: int = 0
+    weekly_pending: int = 0
+    weekly_daily_chart: List[ChartDataPoint] = []   # Mon–Sun hours for current week
+    monthly_weekly_chart: List[ChartDataPoint] = [] # week-by-week hours for current month

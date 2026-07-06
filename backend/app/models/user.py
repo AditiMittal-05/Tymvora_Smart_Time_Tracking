@@ -57,6 +57,9 @@ class User(Base, AuditMixin):
     notifications = relationship(
         "NotificationLog", foreign_keys="NotificationLog.recipient_id", back_populates="recipient"
     )
+    assigned_projects = relationship(
+        "Project", secondary="user_project_assignment", lazy="select",
+    )
 
     @property
     def manager_name(self) -> Optional[str]:

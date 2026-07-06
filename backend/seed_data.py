@@ -427,6 +427,56 @@ def batch_insert(cur, sql, rows, size=500):
 
 # ── Seeder functions ───────────────────────────────────────────────────────────
 
+def seed_designations(cur, sa_id):
+    rows = [
+        ("SWE",  "Software Engineer"),
+        ("SSE",  "Senior Software Engineer"),
+        ("TL",   "Tech Lead"),
+        ("SA",   "Solution Architect"),
+        ("QAE",  "QA Engineer"),
+        ("SDET", "SDET Engineer"),
+        ("UXD",  "UI/UX Designer"),
+        ("SRE",  "DevOps Engineer"),
+        ("BA",   "Business Analyst"),
+        ("PMA",  "Project Manager"),
+        ("HRM",  "HR Manager"),
+        ("FINM", "Finance Manager"),
+        ("SSA",  "Senior Sales Executive"),
+        ("SUP",  "Support Engineer"),
+        ("MKTM", "Marketing Manager"),
+    ]
+    cur.executemany(
+        "INSERT IGNORE INTO designation_master "
+        "(designation_code,designation_name,status,created_by,created_at,updated_by,updated_at,is_deleted) "
+        "VALUES (%s,%s,'active',%s,%s,%s,%s,0)",
+        [(code, name, sa_id, NOW, sa_id, NOW) for code, name in rows]
+    )
+    print(f"  -> {len(rows)} designations")
+
+
+def seed_departments(cur, sa_id):
+    rows = [
+        ("ENG",    "Engineering"),
+        ("QA",     "Quality Assurance"),
+        ("DESIGN", "Design"),
+        ("PM",     "Project Management"),
+        ("DEVOPS", "DevOps"),
+        ("HR",     "Human Resources"),
+        ("FIN",    "Finance"),
+        ("MKT",    "Marketing"),
+        ("SALES",  "Sales"),
+        ("SUPPORT","Support"),
+        ("MGMT",   "Management"),
+    ]
+    cur.executemany(
+        "INSERT IGNORE INTO department_master "
+        "(department_code,department_name,status,created_by,created_at,updated_by,updated_at,is_deleted) "
+        "VALUES (%s,%s,'active',%s,%s,%s,%s,0)",
+        [(code, name, sa_id, NOW, sa_id, NOW) for code, name in rows]
+    )
+    print(f"  -> {len(rows)} departments")
+
+
 def seed_system_config(cur, sa_id):
     rows = [
         ("APP_NAME","HourHive","Application display name",sa_id),
@@ -450,30 +500,30 @@ def seed_system_config(cur, sa_id):
 def seed_users(cur, sa_id):
     admin_rows, emp_rows = [], []
 
-    # 10 Admins
+    # 10 Manager-level employees (can_approve_timesheets=True)
     admin_ids = []
     for i in range(1, 11):
         n, f, l = gen_name()
-        e = f"admin{i:02d}@gnxtsystems.com"
+        e = f"manager{i:02d}@gnxtsystems.com"
         used_emails.add(e)
-        dept = random.choice(["Engineering","QA","Management"])
-        desig = "Engineering Manager" if dept == "Engineering" else "Manager"
-        jd = rand_join()
+        dept = random.choice(["Engineering","QA","Management","DevOps"])
+        desig = "Tech Lead" if dept == "Engineering" else "Manager"
         admin_rows.append((
-            f"ADM{i:03d}", n, e, PWD_ADMIN, "admin", "active",
-            dept, desig, gen_phone(), jd, sa_id, NOW, sa_id, NOW, False
+            f"MGR{i:03d}", n, e, PWD_ADMIN, "employee", "active",
+            dept, desig, gen_phone()
         ))
 
     cur.executemany(
-        "INSERT INTO user_master (employee_code,full_name,email,password_hash,role,status,"
-        "department,designation,phone,created_at,created_by,updated_at,updated_by,last_login,is_deleted) "
-        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        "INSERT INTO user_master "
+        "(employee_code,full_name,email,password_hash,role,status,"
+        "department,designation,phone,can_approve_timesheets,"
+        "created_at,created_by,updated_at,updated_by,last_login,is_deleted) "
+        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,1,%s,%s,%s,%s,%s,0)",
         [(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],
-          NOW,sa_id,NOW,sa_id,
-          NOW - timedelta(hours=random.randint(1,72)),
-          False) for r in admin_rows]
+          NOW, sa_id, NOW, sa_id,
+          NOW - timedelta(hours=random.randint(1,72))) for r in admin_rows]
     )
-    cur.execute("SELECT id,email FROM user_master WHERE role='admin' ORDER BY id")
+    cur.execute("SELECT id,email FROM user_master WHERE can_approve_timesheets=1 AND role='employee' ORDER BY id")
     for uid, em in cur.fetchall():
         admin_ids.append(uid)
     print(f"  -> {len(admin_ids)} admins")
@@ -495,21 +545,24 @@ def seed_users(cur, sa_id):
             all_emp_rows.append((
                 f"EMP{code_num:04d}", n, e, PWD_EMP,
                 "employee", status, dept, desig, gen_phone(),
-                NOW, sa_id, NOW, sa_id, ll, False
+                sa_id,  # manager_id defaults to super admin
+                NOW, sa_id, NOW, sa_id, ll,
             ))
             emp_data.append({"code": f"EMP{code_num:04d}", "email": e, "dept": dept,
                               "act_idxs": act_idxs, "status": status})
             code_num += 1
 
     batch_insert(cur,
-        "INSERT INTO user_master (employee_code,full_name,email,password_hash,role,status,"
-        "department,designation,phone,created_at,created_by,updated_at,updated_by,last_login,is_deleted) "
-        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        "INSERT INTO user_master "
+        "(employee_code,full_name,email,password_hash,role,status,"
+        "department,designation,phone,can_approve_timesheets,manager_id,"
+        "created_at,created_by,updated_at,updated_by,last_login,is_deleted) "
+        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,0,%s,%s,%s,%s,%s,%s,0)",
         all_emp_rows
     )
 
     # Fetch inserted IDs in order
-    cur.execute("SELECT id,employee_code,department FROM user_master WHERE role='employee' ORDER BY id")
+    cur.execute("SELECT id,employee_code,department FROM user_master WHERE role='employee' AND can_approve_timesheets=0 ORDER BY id")
     rows_db = cur.fetchall()
     for i, (uid, ec, dept) in enumerate(rows_db):
         emp_data[i]["id"] = uid
@@ -963,8 +1016,12 @@ def main():
         cur.execute("SET FOREIGN_KEY_CHECKS=0")
         for t in ["approval_history","timesheet_detail","timesheet_header",
                   "audit_log","notification_log","holiday_master","system_config",
-                  "activity_master","project_master"]:
-            cur.execute(f"TRUNCATE TABLE `{t}`")
+                  "activity_master","project_master","user_project_assignment",
+                  "designation_master","department_master"]:
+            # Skip tables that might not exist yet
+            cur.execute(f"SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='{t}'")
+            if cur.fetchone()[0]:
+                cur.execute(f"TRUNCATE TABLE `{t}`")
         cur.execute("DELETE FROM user_master WHERE role != 'super_admin'")
         cur.execute("SET FOREIGN_KEY_CHECKS=1")
         conn.commit()
@@ -975,35 +1032,43 @@ def main():
         sa_id = row[0] if row else 1
 
         # ── Seed ──────────────────────────────────────────────────────────────
-        print("\n[1/8] System config…")
+        print("\n[1/10] Designations…")
+        seed_designations(cur, sa_id)
+        conn.commit()
+
+        print("\n[2/10] Departments…")
+        seed_departments(cur, sa_id)
+        conn.commit()
+
+        print("\n[3/10] System config…")
         seed_system_config(cur, sa_id)
         conn.commit()
 
-        print("\n[2/8] Users (10 admins + 500 employees)…")
+        print("\n[4/10] Users (10 managers + 500 employees)…")
         admin_ids, emp_data = seed_users(cur, sa_id)
         conn.commit()
 
-        print("\n[3/8] Projects (55)…")
+        print("\n[5/10] Projects (55)…")
         project_ids = seed_projects(cur, admin_ids, sa_id)
         conn.commit()
 
-        print("\n[4/8] Activities (20)…")
+        print("\n[6/10] Activities (20)…")
         activity_ids = seed_activities(cur, sa_id)
         conn.commit()
 
-        print("\n[5/8] Holidays…")
+        print("\n[7/10] Holidays…")
         seed_holiday_master(cur, sa_id)
         conn.commit()
 
-        print("\n[6/8] Timesheets (26 weeks × 500 employees — may take 1-2 min)…")
+        print("\n[8/10] Timesheets (26 weeks × 500 employees — may take 1-2 min)…")
         seed_timesheets(cur, emp_data, admin_ids, project_ids, activity_ids)
         conn.commit()
 
-        print("\n[7/8] Notifications…")
+        print("\n[9/10] Notifications…")
         seed_notifications(cur, emp_data, admin_ids)
         conn.commit()
 
-        print("\n[8/8] Audit logs…")
+        print("\n[10/10] Audit logs…")
         seed_audit_logs(cur, admin_ids, emp_data, sa_id)
         conn.commit()
 
@@ -1024,7 +1089,13 @@ def main():
         print("\n" + "=" * 60)
         print("  SEED COMPLETE!")
         print("=" * 60)
-        print(f"  Users            : {u}  (1 super_admin | 10 admins | {u-11} employees)")
+        cur.execute("SELECT COUNT(*) FROM designation_master")
+        dsg = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM department_master")
+        dpt = cur.fetchone()[0]
+        print(f"  Users            : {u}  (1 super_admin | 10 managers | {u-11} employees)")
+        print(f"  Designations     : {dsg}")
+        print(f"  Departments      : {dpt}")
         print(f"  Projects         : {len(project_ids)}")
         print(f"  Activities       : {len(activity_ids)}")
         print(f"  Timesheet weeks  : {h}")
@@ -1034,8 +1105,8 @@ def main():
         print(f"  Audit log rows   : {al}")
         print()
         print("  Login credentials:")
-        print("  Super Admin : superadmin@hourhive.com  /  SuperAdmin@123456")
-        print("  Admin (any) : admin01@gnxtsystems.com  /  Admin@123456")
+        print("  Super Admin : (existing super admin account)")
+        print("  Manager     : manager01@gnxtsystems.com  /  Admin@123456")
         print("  Employee    : <firstname>.<lastname>@gnxtsystems.com  /  Employee@123")
         print("=" * 60)
 

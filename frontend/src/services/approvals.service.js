@@ -30,4 +30,9 @@ export const approvalsService = {
     const res = await api.get(`/approvals/${headerId}/history`);
     return res.data;
   },
+
+  approveWeek: async (weekStartDate) => {
+    const res = await api.post("/approvals/approve-week", { week_start_date: weekStartDate });
+    return res.data;
+  },
 };

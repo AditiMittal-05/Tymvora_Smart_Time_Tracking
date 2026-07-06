@@ -1,7 +1,19 @@
+import re
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from app.models.user import UserRole, UserStatus
+
+_PHONE_RE = re.compile(r"^(\+?91[\-\s]?)?[6-9]\d{9}$")
+
+
+def _clean_phone(v: Optional[str]) -> Optional[str]:
+    if not v or v.strip() == "":
+        return None
+    cleaned = v.strip()
+    if not _PHONE_RE.match(cleaned.replace(" ", "").replace("-", "")):
+        raise ValueError("Enter a valid 10-digit Indian mobile number (e.g. 9876543210 or +91 9876543210)")
+    return cleaned
 
 
 class UserBase(BaseModel):
@@ -12,9 +24,21 @@ class UserBase(BaseModel):
     designation: Optional[str] = None
     phone: Optional[str] = None
 
+    @field_validator("phone", mode="before")
+    @classmethod
+    def validate_phone(cls, v):
+        return _clean_phone(v)
+
 
 class UserCreate(UserBase):
     employee_code: str
+    password: str
+
+    @field_validator("password")
+    @classmethod
+    def strong_password(cls, v):
+        from app.schemas.auth import _validate_password_strength
+        return _validate_password_strength(v)
 
 
 class UserUpdate(BaseModel):
@@ -24,6 +48,11 @@ class UserUpdate(BaseModel):
     designation: Optional[str] = None
     phone: Optional[str] = None
     status: Optional[UserStatus] = None
+
+    @field_validator("phone", mode="before")
+    @classmethod
+    def validate_phone(cls, v):
+        return _clean_phone(v)
 
 
 class UserManagerUpdate(BaseModel):
@@ -44,8 +73,16 @@ class UserResponse(UserBase):
     manager_id: Optional[int] = None
     manager_name: Optional[str] = None
     can_approve_timesheets: bool = False
+    assigned_project_ids: list[int] = []
 
     model_config = {"from_attributes": True}
+
+    @classmethod
+    def model_validate(cls, obj, **kwargs):
+        instance = super().model_validate(obj, **kwargs)
+        if hasattr(obj, "assigned_projects") and obj.assigned_projects is not None:
+            instance.assigned_project_ids = [p.id for p in obj.assigned_projects]
+        return instance
 
 
 class UserDropdown(BaseModel):

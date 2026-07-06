@@ -18,6 +18,7 @@ import { projectsService } from "@/services/projects.service";
 import { activitiesService } from "@/services/activities.service";
 import { useToast } from "@/hooks/use-toast";
 import { useHolidays } from "@/hooks/useHolidays";
+import { isWeekend } from "@/utils/holidays";
 
 const HOUR_OPTIONS = [
   0.25,0.50,0.75,1.00,1.25,1.50,1.75,2.00,2.25,2.50,2.75,3.00,
@@ -41,7 +42,7 @@ export function TimesheetEntryPage() {
   const [copyOpen, setCopyOpen] = useState(false);
   const { toast } = useToast();
   const qc = useQueryClient();
-  const { isNonWorkingDay, getNonWorkingReason } = useHolidays();
+  const { getHolidayInfo, getNonWorkingReason } = useHolidays();
 
   const { data: entries = [], isLoading } = useQuery({
     queryKey: ["timesheet-daily", selectedDate],
@@ -81,7 +82,11 @@ export function TimesheetEntryPage() {
     onError: (e) => toast.error("Failed", e?.response?.data?.detail),
   });
 
-  const isBlocked = isNonWorkingDay(selectedDate);
+  // Both weekends and holidays show informational banners but entries are always allowed.
+  const isWeekendDay = isWeekend(selectedDate);
+  const holidayInfo = getHolidayInfo(selectedDate);
+  const isHolidayDay = holidayInfo.isHoliday && !isWeekendDay;
+  const isBlocked = false;
   const blockedReason = getNonWorkingReason(selectedDate);
 
   const totalHours = entries.reduce((sum, e) => sum + Number(e.hours_worked), 0);
@@ -143,14 +148,34 @@ export function TimesheetEntryPage() {
             />
           </div>
 
-          {/* Non-working day warning */}
-          {isBlocked && (
+          {/* Weekend info banner — entries are still allowed */}
+          {isWeekendDay && (
             <div className="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl border"
-              style={{ background: "rgba(239,68,68,0.05)", borderColor: "rgba(239,68,68,0.2)" }}>
-              <AlertCircle className="h-4 w-4 flex-shrink-0 text-danger" />
+              style={{ background: "rgba(99,102,241,0.05)", borderColor: "rgba(99,102,241,0.25)" }}>
+              <span className="text-lg flex-shrink-0">📅</span>
               <div>
-                <p className="text-sm font-semibold text-danger">Non-working day</p>
-                <p className="text-xs text-danger/70 mt-0.5">{blockedReason} — timesheet entries are not allowed.</p>
+                <p className="text-sm font-semibold" style={{ color: "#4F46E5" }}>
+                  {blockedReason}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: "#6366F1" }}>
+                  You can still log time if you worked today.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Holiday info banner — entries are still allowed */}
+          {isHolidayDay && (
+            <div className="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl border"
+              style={{ background: "rgba(245,158,11,0.06)", borderColor: "rgba(245,158,11,0.3)" }}>
+              <span className="text-lg flex-shrink-0">🎉</span>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: "#B45309" }}>
+                  Public Holiday — {holidayInfo.name}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: "#92400E" }}>
+                  You can still log time if you worked today.
+                </p>
               </div>
             </div>
           )}

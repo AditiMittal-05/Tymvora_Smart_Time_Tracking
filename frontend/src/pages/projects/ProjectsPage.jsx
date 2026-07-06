@@ -16,6 +16,7 @@ import { projectsService } from "@/services/projects.service";
 import { usersService } from "@/services/users.service";
 import { useToast } from "@/hooks/use-toast";
 import { SkeletonTable } from "@/components/shared/PageLoader";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { useAuthStore } from "@/store/auth.store";
 
 const schema = z.object({
@@ -39,6 +40,7 @@ export function ProjectsPage() {
   const [page, setPage] = useState(1);
   const [createOpen, setCreateOpen] = useState(false);
   const [editProject, setEditProject] = useState(null);
+  const [deactivateProject, setDeactivateProject] = useState(null);
   const { toast } = useToast();
   const qc = useQueryClient();
   const isAdmin = useAuthStore((s) => s.user?.role === "super_admin" || s.user?.role === "admin");
@@ -65,39 +67,35 @@ export function ProjectsPage() {
 
   const deactivateMutation = useMutation({
     mutationFn: (id) => projectsService.deactivate(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["projects"] }); toast.success("Project deactivated"); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["projects"] });
+      setDeactivateProject(null);
+      toast.success("Project deactivated");
+    },
   });
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">Project Management</h1>
-          <p className="text-text-secondary text-sm mt-0.5">Track and manage all client projects</p>
-        </div>
-        {isAdmin && <Button onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> Add Project</Button>}
-      </div>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-3">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
-              <Input placeholder="Search projects..." className="pl-9" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
-            </div>
-            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v === "all" ? "" : v); setPage(1); }}>
-              <SelectTrigger className="w-40"><SelectValue placeholder="All Status" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="on_hold">On Hold</SelectItem>
-              </SelectContent>
-            </Select>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold text-text-primary flex-shrink-0">Project Management</h1>
+        <div className="flex items-center gap-2">
+          <div className="relative w-44">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-secondary pointer-events-none" />
+            <Input placeholder="Search projects..." className="pl-8 h-8 text-sm" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
           </div>
-        </CardContent>
-      </Card>
+          <Select value={statusFilter || "all"} onValueChange={(v) => { setStatusFilter(v === "all" ? "" : v); setPage(1); }}>
+            <SelectTrigger className="w-32 h-8 text-sm"><SelectValue placeholder="All Status" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="on_hold">On Hold</SelectItem>
+            </SelectContent>
+          </Select>
+          {isAdmin && <Button size="sm" onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> Add Project</Button>}
+        </div>
+      </div>
 
       <Card>
         <CardContent className="p-0">
@@ -139,7 +137,7 @@ export function ProjectsPage() {
                         <div className="flex gap-1">
                           <Button size="icon" variant="ghost" onClick={() => setEditProject(proj)}><Edit className="h-4 w-4" /></Button>
                           {proj.status === "active" && (
-                            <Button size="icon" variant="ghost" onClick={() => deactivateMutation.mutate(proj.id)}>
+                            <Button size="icon" variant="ghost" onClick={() => setDeactivateProject(proj)}>
                               <PowerOff className="h-4 w-4 text-danger" />
                             </Button>
                           )}
@@ -171,6 +169,16 @@ export function ProjectsPage() {
           loading={updateMutation.isPending} title="Edit Project" managers={managers || []}
           defaultValues={editProject} isEdit />
       )}
+
+      <ConfirmDialog
+        open={!!deactivateProject}
+        onOpenChange={(o) => { if (!o) setDeactivateProject(null); }}
+        title="Deactivate this project?"
+        description={deactivateProject ? `"${deactivateProject.project_name}" will be marked inactive and hidden from active project selections.` : ""}
+        confirmLabel="Deactivate"
+        onConfirm={() => deactivateMutation.mutate(deactivateProject.id)}
+        loading={deactivateMutation.isPending}
+      />
     </div>
   );
 }

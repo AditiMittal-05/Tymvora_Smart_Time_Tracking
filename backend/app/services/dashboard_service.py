@@ -259,7 +259,94 @@ class DashboardService:
             hrs = hrs_q.scalar() or 0
             monthly_chart.append(ChartDataPoint(label=f"{calendar.month_abbr[m]} {y}", value=float(hrs)))
 
+        # Week bounds (Mon–Sun)
+        week_start = today - timedelta(days=today.weekday())
+        week_end   = week_start + timedelta(days=6)
+
+        def _status_count(status_list, date_from, date_to):
+            q = self.db.query(func.count(TimesheetHeader.id)).filter(
+                TimesheetHeader.status.in_(status_list),
+                TimesheetHeader.week_start_date >= date_from,
+                TimesheetHeader.week_start_date <= date_to,
+                TimesheetHeader.is_deleted == False,
+            )
+            if approver_id is not None:
+                q = q.join(User, TimesheetHeader.employee_id == User.id).filter(
+                    User.manager_id == approver_id
+                )
+            return q.scalar() or 0
+
+        # Monthly status breakdown
+        m_draft     = _status_count([TimesheetStatus.DRAFT],                               month_start, today)
+        m_submitted = _status_count([TimesheetStatus.SUBMITTED, TimesheetStatus.RESUBMITTED], month_start, today)
+        m_approved  = _status_count([TimesheetStatus.APPROVED],                            month_start, today)
+        m_rejected  = _status_count([TimesheetStatus.REJECTED],                            month_start, today)
+        monthly_status_chart = [
+            ChartDataPoint(label="Draft",     value=float(m_draft)),
+            ChartDataPoint(label="Submitted", value=float(m_submitted)),
+            ChartDataPoint(label="Approved",  value=float(m_approved)),
+            ChartDataPoint(label="Rejected",  value=float(m_rejected)),
+        ]
+
+        # Weekly status breakdown
+        w_draft     = _status_count([TimesheetStatus.DRAFT],                               week_start, week_end)
+        w_submitted = _status_count([TimesheetStatus.SUBMITTED, TimesheetStatus.RESUBMITTED], week_start, week_end)
+        w_approved  = _status_count([TimesheetStatus.APPROVED],                            week_start, week_end)
+        w_rejected  = _status_count([TimesheetStatus.REJECTED],                            week_start, week_end)
+        weekly_status_chart = [
+            ChartDataPoint(label="Draft",     value=float(w_draft)),
+            ChartDataPoint(label="Submitted", value=float(w_submitted)),
+            ChartDataPoint(label="Approved",  value=float(w_approved)),
+            ChartDataPoint(label="Rejected",  value=float(w_rejected)),
+        ]
+
+        # Weekly daily chart: Mon–Sun of the current week (hours per day)
+        day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        weekly_daily_chart = []
+        for offset in range(7):
+            day = week_start + timedelta(days=offset)
+            hrs_q = self.db.query(func.sum(TimesheetDetail.hours_worked)).filter(
+                TimesheetDetail.work_date == day,
+                TimesheetDetail.is_deleted == False,
+            )
+            if approver_id is not None:
+                hrs_q = hrs_q.join(User, TimesheetDetail.employee_id == User.id).filter(
+                    User.manager_id == approver_id
+                )
+            hrs = float(hrs_q.scalar() or 0)
+            weekly_daily_chart.append(ChartDataPoint(label=day_names[offset], value=hrs))
+
+        # Monthly weekly chart: week-by-week breakdown for the current month
+        monthly_weekly_chart = []
+        import calendar as _cal
+        _, days_in_month = _cal.monthrange(today.year, today.month)
+        # Walk week-by-week from month_start
+        wk = month_start
+        week_num = 1
+        while wk <= today:
+            wk_end = min(wk + timedelta(days=6), today)
+            hrs_q = self.db.query(func.sum(TimesheetDetail.hours_worked)).filter(
+                TimesheetDetail.work_date >= wk,
+                TimesheetDetail.work_date <= wk_end,
+                TimesheetDetail.is_deleted == False,
+            )
+            if approver_id is not None:
+                hrs_q = hrs_q.join(User, TimesheetDetail.employee_id == User.id).filter(
+                    User.manager_id == approver_id
+                )
+            hrs = float(hrs_q.scalar() or 0)
+            monthly_weekly_chart.append(ChartDataPoint(label=f"Wk {week_num}", value=hrs))
+            wk += timedelta(days=7)
+            week_num += 1
+
         return ApproverDashboard(kpis=kpis, top_projects=top_projects,
                                  dept_hours=dept_hours,
                                  pending_approvals=pending_items,
-                                 monthly_hours_chart=monthly_chart)
+                                 monthly_hours_chart=monthly_chart,
+                                 monthly_status_chart=monthly_status_chart,
+                                 weekly_status_chart=weekly_status_chart,
+                                 weekly_approved=w_approved,
+                                 weekly_rejected=w_rejected,
+                                 weekly_pending=w_submitted,
+                                 weekly_daily_chart=weekly_daily_chart,
+                                 monthly_weekly_chart=monthly_weekly_chart)

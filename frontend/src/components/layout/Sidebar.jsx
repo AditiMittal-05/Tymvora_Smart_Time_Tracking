@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, FolderKanban, Activity, CheckSquare,
   BarChart3, TrendingUp, ChevronLeft, ClipboardList, Timer,
-  Shield, CalendarDays, GitBranch, UserCog,
+  Shield, CalendarDays, UserCog, Briefcase, Building2,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { useAuthStore } from "@/store/auth.store";
@@ -12,7 +12,7 @@ export function Sidebar({ open, onToggle }) {
   const location = useLocation();
   const user = useAuthStore((s) => s.user);
   const isSuperAdmin = user?.role === "super_admin";
-  const isApprover = isSuperAdmin || user?.can_approve_timesheets === true;
+  const isApprover = user?.can_approve_timesheets === true;
 
   const navSections = [
     {
@@ -46,11 +46,12 @@ export function Sidebar({ open, onToggle }) {
       label: "Administration",
       items: [
         { label: "User Management", path: "/users", icon: Users },
-        { label: "Org Hierarchy", path: "/organization", icon: GitBranch },
-        { label: "Manager Assignment", path: "/approver-mapping", icon: UserCog },
+        { label: "Manager Setup", path: "/manager-setup", icon: UserCog },
         { label: "Projects", path: "/projects", icon: FolderKanban },
         { label: "Activities", path: "/activities", icon: Activity },
         { label: "Holiday Management", path: "/holidays", icon: CalendarDays },
+        { label: "Designation Master", path: "/designation-master", icon: Briefcase },
+        { label: "Department Master", path: "/department-master", icon: Building2 },
         { label: "Audit Logs", path: "/audit-logs", icon: Shield },
       ],
     }] : []),
@@ -58,7 +59,7 @@ export function Sidebar({ open, onToggle }) {
 
   return (
     <motion.aside
-      animate={{ width: open ? 260 : 68 }}
+      animate={{ width: open ? 220 : 68 }}
       transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
       className="fixed left-0 top-0 h-full sidebar-gradient text-white z-40 flex flex-col overflow-visible"
       style={{ willChange: "width" }}
@@ -100,7 +101,7 @@ export function Sidebar({ open, onToggle }) {
       {/* ── Collapse toggle — fixed to sidebar right edge ─────── */}
       <motion.button
         onClick={onToggle}
-        animate={{ left: open ? 260 - 14 : 68 - 14 }}
+        animate={{ left: open ? 220 - 14 : 68 - 14 }}
         transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
         whileHover={{ scale: 1.15 }}
         whileTap={{ scale: 0.9 }}

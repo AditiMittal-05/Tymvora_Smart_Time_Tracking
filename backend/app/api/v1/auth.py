@@ -5,12 +5,12 @@ from app.database.session import get_db
 from app.api.deps import get_current_active_user
 from app.schemas.auth import (
     LoginRequest, TokenResponse, RefreshRequest,
-    ForgotPasswordRequest, ResetPasswordRequest, ChangePasswordRequest,
-    RegisterRequest,
+    ForgotPasswordRequest, ResetPasswordRequest, OtpResetRequest,
+    ChangePasswordRequest, RegisterRequest,
 )
 from app.schemas.user import UserResponse
 from app.services.auth_service import AuthService
-from app.services.email_service import send_password_reset_email
+from app.services.email_service import send_otp_email
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -32,10 +32,16 @@ def refresh(body: RefreshRequest, db: Session = Depends(get_db)):
 
 @router.post("/forgot-password")
 def forgot_password(body: ForgotPasswordRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    token, full_name = AuthService(db).forgot_password(body.email)
-    if token:
-        background_tasks.add_task(send_password_reset_email, body.email, full_name, token)
-    return {"message": "If the email exists, a reset link has been sent."}
+    otp, full_name = AuthService(db).forgot_password(body.email)
+    if otp:
+        background_tasks.add_task(send_otp_email, body.email, full_name, otp)
+    return {"message": "If the email exists, a 6-digit OTP has been sent."}
+
+
+@router.post("/verify-otp")
+def verify_otp(body: OtpResetRequest, db: Session = Depends(get_db)):
+    AuthService(db).verify_otp_and_reset(body.email, body.otp, body.new_password)
+    return {"message": "Password reset successful"}
 
 
 @router.post("/reset-password")

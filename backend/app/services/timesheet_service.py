@@ -183,13 +183,24 @@ class TimesheetService:
         return new_entries
 
     def submit_timesheet(self, header_id: int, employee_id: int) -> TimesheetHeader:
+        from app.models.user import User, UserRole
         header = self.header_repo.get(header_id)
         if not header or header.employee_id != employee_id:
             raise NotFoundException("Timesheet not found")
         if header.status not in [TimesheetStatus.DRAFT, TimesheetStatus.REJECTED]:
             raise BusinessRuleException("Only draft or rejected timesheets can be submitted")
-        header.status = TimesheetStatus.SUBMITTED
-        header.submitted_at = datetime.now(timezone.utc)
+        now = datetime.now(timezone.utc)
+        employee = self.db.query(User).filter(User.id == employee_id).first()
+        # Super admins auto-approve their own timesheets (no manager to approve them)
+        if employee and employee.role == UserRole.SUPER_ADMIN:
+            header.status = TimesheetStatus.APPROVED
+            header.submitted_at = now
+            header.approved_by = employee_id
+            header.approved_at = now
+            header.is_locked = True
+        else:
+            header.status = TimesheetStatus.SUBMITTED
+            header.submitted_at = now
         header.updated_by = employee_id
         self.db.commit()
         self.db.refresh(header)

@@ -26,7 +26,7 @@ export function AppLayout() {
       <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen((p) => !p)} />
 
       <motion.div
-        animate={{ marginLeft: sidebarOpen ? 260 : 68 }}
+        animate={{ marginLeft: sidebarOpen ? 220 : 68 }}
         transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
         className="flex flex-col flex-1 overflow-hidden"
         style={{ willChange: "margin-left" }}

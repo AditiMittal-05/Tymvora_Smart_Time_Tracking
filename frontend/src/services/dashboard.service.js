@@ -6,6 +6,11 @@ export const dashboardService = {
     return res.data;
   },
 
+  superAdmin: async () => {
+    const res = await api.get("/dashboard/super-admin");
+    return res.data;
+  },
+
   approver: async () => {
     const res = await api.get("/dashboard/approver");
     return res.data;

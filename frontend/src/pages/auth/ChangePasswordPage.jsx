@@ -12,10 +12,17 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { authService } from "@/services/auth.service";
 import { useToast } from "@/hooks/use-toast";
+import { PasswordStrengthBar } from "@/components/shared/PasswordStrengthBar";
 
 const schema = z.object({
-  old_password: z.string().min(1, "Current password required"),
-  new_password: z.string().min(8, "Password must be at least 8 characters"),
+  old_password: z.string().min(1, "Current password is required"),
+  new_password: z
+    .string()
+    .min(8, "At least 8 characters")
+    .regex(/[A-Z]/, "Must contain an uppercase letter")
+    .regex(/[a-z]/, "Must contain a lowercase letter")
+    .regex(/[0-9]/, "Must contain a number")
+    .regex(/[^A-Za-z0-9]/, "Must contain a special character"),
   confirm: z.string(),
 }).refine((d) => d.new_password === d.confirm, { message: "Passwords don't match", path: ["confirm"] });
 
@@ -23,7 +30,10 @@ export function ChangePasswordPage() {
   const [showPw, setShowPw] = useState(false);
   const { toast } = useToast();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({ resolver: zodResolver(schema) });
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+  });
+  const watchedNew = watch("new_password", "");
 
   const mutation = useMutation({
     mutationFn: (data) => authService.changePassword(data.old_password, data.new_password),
@@ -59,15 +69,24 @@ export function ChangePasswordPage() {
           <CardTitle className="flex items-center gap-2">
             <Key className="h-5 w-5 text-primary" /> Security Settings
           </CardTitle>
-          <CardDescription>Enter your current password and choose a new one.</CardDescription>
+          <CardDescription>Enter your current password and choose a strong new one.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-5">
             <div className="space-y-1.5">
               <Label>Current Password</Label>
               <div className="relative">
-                <Input type={showPw ? "text" : "password"} placeholder="Your current password" className="pr-10" {...register("old_password")} />
-                <button type="button" onClick={() => setShowPw((p) => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary">
+                <Input
+                  type={showPw ? "text" : "password"}
+                  placeholder="Your current password"
+                  className="pr-10"
+                  {...register("old_password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw((p) => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors"
+                >
                   {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
@@ -76,13 +95,22 @@ export function ChangePasswordPage() {
 
             <div className="space-y-1.5">
               <Label>New Password</Label>
-              <Input type={showPw ? "text" : "password"} placeholder="Min. 8 characters" {...register("new_password")} />
+              <Input
+                type={showPw ? "text" : "password"}
+                placeholder="Min. 8 characters"
+                {...register("new_password")}
+              />
               {errors.new_password && <p className="text-xs text-danger">{errors.new_password.message}</p>}
+              <PasswordStrengthBar password={watchedNew} />
             </div>
 
             <div className="space-y-1.5">
               <Label>Confirm New Password</Label>
-              <Input type={showPw ? "text" : "password"} placeholder="Repeat new password" {...register("confirm")} />
+              <Input
+                type={showPw ? "text" : "password"}
+                placeholder="Repeat new password"
+                {...register("confirm")}
+              />
               {errors.confirm && <p className="text-xs text-danger">{errors.confirm.message}</p>}
             </div>
 

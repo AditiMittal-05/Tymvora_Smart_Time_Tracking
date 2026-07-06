@@ -28,8 +28,9 @@ import { ReportsPage } from "@/pages/reports/ReportsPage";
 import { AnalyticsPage } from "@/pages/reports/AnalyticsPage";
 import { AuditLogsPage } from "@/pages/audit/AuditLogsPage";
 import { HolidayManagementPage } from "@/pages/holidays/HolidayManagementPage";
-import { OrganizationHierarchyPage } from "@/pages/organization/OrganizationHierarchyPage";
-import { ApproverMappingPage } from "@/pages/organization/ApproverMappingPage";
+import { ManagerSetupPage } from "@/pages/organization/ManagerSetupPage";
+import { DesignationMasterPage } from "@/pages/designations/DesignationMasterPage";
+import { DepartmentMasterPage } from "@/pages/departments/DepartmentMasterPage";
 
 function ProfileRouter() {
   const user = useAuthStore((s) => s.user);
@@ -41,7 +42,7 @@ function ProtectedRoute({ children, superAdminOnly = false, approverOnly = false
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (superAdminOnly && user?.role !== "super_admin")
     return <Navigate to="/dashboard" replace />;
-  if (approverOnly && user?.role !== "super_admin" && !user?.can_approve_timesheets)
+  if (approverOnly && !user?.can_approve_timesheets)
     return <Navigate to="/dashboard" replace />;
   return <>{children}</>;
 }
@@ -72,7 +73,7 @@ export default function App() {
           <Route path="/timesheets/entry" element={<TimesheetEntryPage />} />
           <Route path="/timesheets/weekly" element={<WeeklyViewPage />} />
 
-          {/* Approvals — approver employees + super_admin */}
+          {/* Approvals — manager employees only (can_approve_timesheets=true) */}
           <Route path="/approvals" element={<ProtectedRoute approverOnly><ApprovalsPage /></ProtectedRoute>} />
 
           {/* Reports — all authenticated users */}
@@ -83,10 +84,14 @@ export default function App() {
           <Route path="/users" element={<ProtectedRoute superAdminOnly><UsersPage /></ProtectedRoute>} />
           <Route path="/projects" element={<ProtectedRoute superAdminOnly><ProjectsPage /></ProtectedRoute>} />
           <Route path="/activities" element={<ProtectedRoute superAdminOnly><ActivitiesPage /></ProtectedRoute>} />
-          <Route path="/organization" element={<ProtectedRoute superAdminOnly><OrganizationHierarchyPage /></ProtectedRoute>} />
-          <Route path="/approver-mapping" element={<ProtectedRoute superAdminOnly><ApproverMappingPage /></ProtectedRoute>} />
+          <Route path="/manager-setup" element={<ProtectedRoute superAdminOnly><ManagerSetupPage /></ProtectedRoute>} />
+          {/* Legacy redirects so old bookmarks still work */}
+          <Route path="/organization" element={<Navigate to="/manager-setup" replace />} />
+          <Route path="/approver-mapping" element={<Navigate to="/manager-setup" replace />} />
           <Route path="/audit-logs" element={<ProtectedRoute superAdminOnly><AuditLogsPage /></ProtectedRoute>} />
           <Route path="/holidays" element={<ProtectedRoute superAdminOnly><HolidayManagementPage /></ProtectedRoute>} />
+          <Route path="/designation-master" element={<ProtectedRoute superAdminOnly><DesignationMasterPage /></ProtectedRoute>} />
+          <Route path="/department-master" element={<ProtectedRoute superAdminOnly><DepartmentMasterPage /></ProtectedRoute>} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

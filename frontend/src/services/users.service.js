@@ -53,4 +53,14 @@ export const usersService = {
     const res = await api.patch(`/users/${userId}/toggle-approver`, { can_approve_timesheets: canApprove });
     return res.data;
   },
+
+  getUserProjects: async (userId) => {
+    const res = await api.get(`/users/${userId}/projects`);
+    return res.data;
+  },
+
+  assignProjects: async (userId, projectIds) => {
+    const res = await api.post(`/users/${userId}/projects`, { project_ids: projectIds });
+    return res.data;
+  },
 };

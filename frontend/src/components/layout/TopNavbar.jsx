@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Menu, Bell, Search, LogOut, Key, ChevronDown, ChevronRight,
-  Shield, User, Sun, Moon, Settings,
+  Menu, Bell, LogOut, Key, ChevronDown, ChevronRight,
+  Shield, User, Sun, Moon,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 import { useProfileStore } from "@/store/profile.store";
@@ -35,8 +35,6 @@ export function TopNavbar({ onMenuToggle }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [searchFocused, setSearchFocused] = useState(false);
   const { user, logout } = useAuthStore();
   const isSuperAdmin = user?.role === "super_admin";
   const employeeAvatar = useProfileStore((s) => s.avatar);
@@ -99,29 +97,6 @@ export function TopNavbar({ onMenuToggle }) {
       </div>
 
       <div className="flex-1" />
-
-      {/* Search */}
-      <motion.div
-        animate={{ width: searchFocused ? 260 : 180 }}
-        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-        className="relative hidden md:block flex-shrink-0"
-      >
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30 pointer-events-none" />
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onFocus={() => setSearchFocused(true)}
-          onBlur={() => setSearchFocused(false)}
-          placeholder="Search..."
-          className="w-full pl-9 pr-3 h-8 rounded-xl text-sm text-white/80 placeholder:text-white/25
-                     focus:outline-none transition-all duration-200"
-          style={{
-            background: searchFocused ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.05)",
-            border: searchFocused ? "1px solid rgba(37,99,235,0.5)" : "1px solid rgba(255,255,255,0.06)",
-            boxShadow: searchFocused ? "0 0 0 3px rgba(37,99,235,0.12)" : "none",
-          }}
-        />
-      </motion.div>
 
       {/* Theme toggle */}
       <motion.button

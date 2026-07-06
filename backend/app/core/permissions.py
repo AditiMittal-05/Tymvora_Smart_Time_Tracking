@@ -1,5 +1,5 @@
 from fastapi import Depends
-from app.core.exceptions import PermissionDeniedException, BusinessRuleException
+from app.core.exceptions import PermissionDeniedException
 from app.models.user import UserRole
 
 
@@ -23,11 +23,11 @@ def require_super_admin():
 
 
 def require_approver():
-    """Allow super_admin OR employees with can_approve_timesheets=True."""
+    """Allow only employees with can_approve_timesheets=True (managers)."""
     from app.api.deps import get_current_active_user
 
     async def checker(current_user=Depends(get_current_active_user)):
-        if current_user.role == UserRole.SUPER_ADMIN or current_user.can_approve_timesheets:
+        if current_user.can_approve_timesheets:
             return current_user
         raise PermissionDeniedException("You do not have timesheet approval permissions.")
 
@@ -35,15 +35,12 @@ def require_approver():
 
 
 def guard_super_admin_target(target_user) -> None:
-    """Raise if the target user is the super_admin — they are immutable."""
-    if target_user.role == UserRole.SUPER_ADMIN:
-        raise BusinessRuleException(
-            "The SuperAdmin account cannot be modified, deactivated, or deleted."
-        )
+    """No-op: multiple super admins are allowed and fully manageable."""
+    pass
 
 
 def can_manage_role(actor_role: UserRole, target_role: UserRole) -> bool:
-    """SuperAdmin can manage employees. Employees cannot manage anyone."""
+    """SuperAdmin can manage employees and other super_admins."""
     if actor_role == UserRole.SUPER_ADMIN:
-        return target_role == UserRole.EMPLOYEE
+        return target_role in (UserRole.EMPLOYEE, UserRole.SUPER_ADMIN)
     return False
