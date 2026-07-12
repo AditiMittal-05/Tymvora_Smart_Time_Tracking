@@ -6,7 +6,7 @@ HourHive Demo Seed  –  seed_demo.py
 • All user fields populated (dept, designation, phone, manager_id, can_approve)
 • 5 projects assigned with project_manager_id wired to managers
 • Approver-mapping: every manager can approve their direct reports
-• 9 weeks of timesheet data (≈ 2 months) for aditimittal0103@gmail.com
+• 9 weeks of timesheet data (≈ 2 months) for your-email@gmail.com
   with mixed statuses: approved, submitted, draft, rejected
 
 Run from the backend directory:
