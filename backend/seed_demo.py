@@ -456,12 +456,12 @@ def main():
         conn.commit()
         print(f"  -> {len(act_map)} activities confirmed")
 
-        # ── STEP 4: Timesheets for aditimittal0103@gmail.com ─────────────────
-        print("\n[4/4] Timesheet data for aditimittal0103@gmail.com…")
-        cur.execute("SELECT id FROM user_master WHERE email=%s", ("aditimittal0103@gmail.com",))
+        # ── STEP 4: Timesheets for your-email@gmail.com ─────────────────
+        print("\n[4/4] Timesheet data for your-email@gmail.com…")
+        cur.execute("SELECT id FROM user_master WHERE email=%s", ("your-email@gmail.com",))
         row = cur.fetchone()
         if not row:
-            print("  WARNING: User aditimittal0103@gmail.com not found in DB. "
+            print("  WARNING: User your-email@gmail.com not found in DB. "
                   "Please register with this email in the app first, then re-run.")
         else:
             aditi_id = row[0]
@@ -506,7 +506,7 @@ def main():
         print("  All employee logins   : Employee@123")
         print("  Manager logins        : Manager@123")
         print()
-        print("  Timesheet weeks generated for aditimittal0103@gmail.com:")
+        print("  Timesheet weeks generated for your-email@gmail.com:")
         for i,(ws,we) in enumerate(WEEKS):
             statuses = ["approved","approved","approved","approved",
                         "approved","rejected","submitted","submitted","draft"]
