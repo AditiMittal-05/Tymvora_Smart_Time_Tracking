@@ -1,5 +1,5 @@
-# ⏱️ HourHive
-HourHive is a full-stack modern Timesheet Management System for employee effort tracking, project monitoring, timesheet approvals, workflow management, dashboards, and productivity analytics.
+# ⏱️ Tymvora
+Tymvora is a full-stack modern Timesheet Management System for employee effort tracking, project monitoring, timesheet approvals, workflow management, dashboards, and productivity analytics.
 
 ## 🚀 Features
 
@@ -135,5 +135,4 @@ This project is developed for learning and organizational productivity managemen
 
 ## Author
 Developed by Aditi Mittal
-* Mobile Application
-* Advanced Analytics
+* Full Stack Developer
