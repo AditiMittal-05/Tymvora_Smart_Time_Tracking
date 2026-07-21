@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HourHive Expand Seed  –  seed_expand.py
+Tymvora Expand Seed  –  seed_expand.py
 =========================================
 • Adds 15 more employees randomly distributed under existing approver-managers
 • Adds 15 more projects (with realistic data) assigned to managers
@@ -52,55 +52,55 @@ PWD_HASH = bcrypt.hashpw(b"Employee@123", bcrypt.gensalt()).decode()
 # format: (emp_code, full_name, email, dept, designation, phone, mgr_code)
 NEW_EMPLOYEES = [
     # Engineering  (under Neha Gupta DEMO004 or Arjun Kumar DEMO009)
-    ("EXP001","Karan Dubey",       "karan.dubey@gnxtsystems.com",
+    ("EXP001","Karan Dubey",       "karan.dubey@tymvora.com",
      "Engineering","Software Engineer",            "+918800112201","DEMO004"),
 
-    ("EXP002","Ishaan Bhatt",      "ishaan.bhatt@gnxtsystems.com",
+    ("EXP002","Ishaan Bhatt",      "ishaan.bhatt@tymvora.com",
      "Engineering","Software Engineer",            "+918800112202","DEMO009"),
 
-    ("EXP003","Pallavi Mishra",    "pallavi.mishra@gnxtsystems.com",
+    ("EXP003","Pallavi Mishra",    "pallavi.mishra@tymvora.com",
      "Engineering","Junior Software Engineer",     "+918800112203","DEMO009"),
 
     # QA  (under Amit Singh DEMO005 or Divya Joshi DEMO010)
-    ("EXP004","Rohan Tiwari",      "rohan.tiwari@gnxtsystems.com",
+    ("EXP004","Rohan Tiwari",      "rohan.tiwari@tymvora.com",
      "QA",         "QA Engineer",                 "+918800112204","DEMO005"),
 
-    ("EXP005","Nisha Kaur",        "nisha.kaur@gnxtsystems.com",
+    ("EXP005","Nisha Kaur",        "nisha.kaur@tymvora.com",
      "QA",         "Senior QA Engineer",          "+918800112205","DEMO005"),
 
     # DevOps  (under Rahul Verma DEMO007 or Akash Chauhan DEMO011)
-    ("EXP006","Deepak Nair",       "deepak.nair@gnxtsystems.com",
+    ("EXP006","Deepak Nair",       "deepak.nair@tymvora.com",
      "DevOps",     "DevOps Engineer",             "+918800112206","DEMO007"),
 
-    ("EXP007","Simran Arora",      "simran.arora@gnxtsystems.com",
+    ("EXP007","Simran Arora",      "simran.arora@tymvora.com",
      "DevOps",     "Site Reliability Engineer",   "+918800112207","DEMO011"),
 
     # Product  (under Kavya Patel DEMO006)
-    ("EXP008","Vaibhav Jain",      "vaibhav.jain@gnxtsystems.com",
+    ("EXP008","Vaibhav Jain",      "vaibhav.jain@tymvora.com",
      "Product",    "Associate Product Manager",   "+918800112208","DEMO006"),
 
-    ("EXP009","Shreeram Kulkarni", "shreeram.kulkarni@gnxtsystems.com",
+    ("EXP009","Shreeram Kulkarni", "shreeram.kulkarni@tymvora.com",
      "Product",    "Product Manager",             "+918800112209","DEMO006"),
 
     # Finance  (under Sanjay Mehta DEMO003 or Rohit Sinha DEMO013)
-    ("EXP010","Kavita Sharma",     "kavita.sharma@gnxtsystems.com",
+    ("EXP010","Kavita Sharma",     "kavita.sharma@tymvora.com",
      "Finance",    "Accountant",                  "+918800112210","DEMO003"),
 
-    ("EXP011","Alok Verma",        "alok.verma@gnxtsystems.com",
+    ("EXP011","Alok Verma",        "alok.verma@tymvora.com",
      "Finance",    "Finance Executive",           "+918800112211","DEMO013"),
 
     # HR  (under Priya Nair DEMO002 or Pooja Agarwal DEMO008)
-    ("EXP012","Sunita Rao",        "sunita.rao@gnxtsystems.com",
+    ("EXP012","Sunita Rao",        "sunita.rao@tymvora.com",
      "HR",         "HR Executive",                "+918800112212","DEMO002"),
 
-    ("EXP013","Hemant Pandey",     "hemant.pandey@gnxtsystems.com",
+    ("EXP013","Hemant Pandey",     "hemant.pandey@tymvora.com",
      "HR",         "Talent Acquisition Specialist","+918800112213","DEMO008"),
 
     # Sales  (under Vikram Rathore DEMO015)
-    ("EXP014","Tanmay Shah",       "tanmay.shah@gnxtsystems.com",
+    ("EXP014","Tanmay Shah",       "tanmay.shah@tymvora.com",
      "Sales",      "Sales Executive",             "+918800112214","DEMO015"),
 
-    ("EXP015","Prerna Soni",       "prerna.soni@gnxtsystems.com",
+    ("EXP015","Prerna Soni",       "prerna.soni@tymvora.com",
      "Sales",      "Senior Sales Executive",      "+918800112215","DEMO015"),
 ]
 

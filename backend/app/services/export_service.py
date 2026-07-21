@@ -62,7 +62,7 @@ class ExportService:
         styles = getSampleStyleSheet()
 
         elements = []
-        elements.append(Paragraph("HourHive – Daily Timesheet Report", styles["Title"]))
+        elements.append(Paragraph("Tymvora – Daily Timesheet Report", styles["Title"]))
         elements.append(Spacer(1, 12))
 
         data = [["Date", "Employee", "Code", "Project", "Activity", "Hours", "Billable"]]

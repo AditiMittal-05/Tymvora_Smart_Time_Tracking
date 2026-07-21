@@ -194,7 +194,7 @@ def upgrade() -> None:
         INSERT INTO user_master (employee_code, full_name, email, password_hash, role, status,
                                   department, designation, created_at, updated_at, is_deleted)
         VALUES (
-            'EMP001', 'System Admin', 'admin@gnxtsystems.com',
+            'EMP001', 'System Admin', 'admin@tymvora.com',
             '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TiGmiZes2W8G.jT3jHnFAZeKzOim',
             'admin', 'active', 'IT', 'System Administrator', NOW(), NOW(), 0
         )

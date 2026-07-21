@@ -53,6 +53,14 @@ function useTooltip() {
   };
 }
 
+/* ─── compact number formatter (for tight spaces like donut centers) ── */
+function formatCompact(n) {
+  const num = Number(n) || 0;
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
+  if (num >= 1_000)     return `${(num / 1_000).toFixed(1).replace(/\.0$/, "")}K`;
+  return String(Math.round(num));
+}
+
 /* ─── bar top-label ─────────────────────────────────────────── */
 function BarTopLabel({ x, y, width, value }) {
   if (!value) return null;
@@ -144,6 +152,12 @@ export function SuperAdminDashboard() {
     ? ALL_STATUSES.map((s)=>{ const found=rawTs.find((d)=>d.label===s); return { label:s, value:found?.value??0 }; })
     : (tsPer==="week"?SAMPLE_WEEK:SAMPLE_MONTH);
   const tsTotal = tsData.reduce((s,d)=>s+d.value,0);
+  // Reserve a small visible sliver for zero-value statuses so all 4 always show in the ring;
+  // tooltip/legend still read the real `value`, this only affects the rendered angle.
+  const tsPieData = tsData.map((d) => ({
+    ...d,
+    renderValue: d.value > 0 ? d.value : (tsTotal > 0 ? tsTotal * 0.035 : 1),
+  }));
 
   const deptData  = data?.dept_hours||[];
   const deptTotal = deptData.reduce((s,d)=>s+d.value,0);
@@ -287,12 +301,13 @@ export function SuperAdminDashboard() {
             <div className="flex-1 min-h-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart margin={{ top:6, right:6, bottom:0, left:6 }}>
-                  {/* full pie — innerRadius=0 */}
-                  <Pie data={tsData} dataKey="value" nameKey="label"
+                  {/* full pie — innerRadius=0. Uses renderValue (never 0) so every status stays visible;
+                      tooltip reads the real value off the payload. */}
+                  <Pie data={tsPieData} dataKey="renderValue" nameKey="label"
                     cx="50%" cy="50%" innerRadius={0} outerRadius="72%" strokeWidth={1.5} stroke="var(--surface)">
-                    {tsData.map((d) => <Cell key={d.label} fill={STATUS_COLORS[d.label]||"#94A3B8"} />)}
+                    {tsPieData.map((d) => <Cell key={d.label} fill={STATUS_COLORS[d.label]||"#94A3B8"} />)}
                   </Pie>
-                  <Tooltip {...tooltip} formatter={(v,n)=>[v,n]} />
+                  <Tooltip {...tooltip} formatter={(_v,n,props)=>[props.payload.value,n]} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -341,9 +356,15 @@ export function SuperAdminDashboard() {
                   <Tooltip {...tooltip} formatter={(v)=>[`${Number(v).toFixed(0)}h`,"Hours"]} />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none px-2">
                 <span className="text-[8px] font-semibold" style={S.tx3}>Total</span>
-                <span className="text-lg font-bold tabular-nums leading-tight" style={S.tx1}>{Math.round(deptTotal)||"—"}</span>
+                <span
+                  className={`font-bold tabular-nums leading-tight ${deptTotal >= 1000 ? "text-xs" : "text-lg"}`}
+                  style={S.tx1}
+                  title={deptTotal ? `${Math.round(deptTotal)}h` : undefined}
+                >
+                  {deptTotal ? formatCompact(deptTotal) : "—"}
+                </span>
               </div>
             </div>
             {/* Legend */}

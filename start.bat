@@ -1,19 +1,19 @@
 @echo off
-title HourHive Launcher
+title Tymvora Launcher
 color 0A
 
 echo.
 echo  ==========================================
-echo   HourHive - gNxt Systems
+echo   Tymvora - Tymvora Technologies
 echo   Starting backend and frontend...
 echo  ==========================================
 echo.
 
 echo [1/2] Opening Backend Server (port 8000)...
-start "HourHive - BACKEND - Port 8000" cmd /k "%~dp0start_backend.bat"
+start "Tymvora - BACKEND - Port 8000" cmd /k "%~dp0start_backend.bat"
 
 echo [2/2] Opening Frontend Server (port 5173)...
-start "HourHive - FRONTEND - Port 5173" cmd /k "%~dp0start_frontend.bat"
+start "Tymvora - FRONTEND - Port 5173" cmd /k "%~dp0start_frontend.bat"
 
 echo.
 echo  Waiting for both servers to be ready...

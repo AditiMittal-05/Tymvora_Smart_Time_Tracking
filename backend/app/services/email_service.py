@@ -51,7 +51,7 @@ def _base_template(title: str, body_html: str) -> str:
 <body>
   <div class="wrapper">
     <div class="header">
-      <h1>🐝 HourHive</h1>
+        <h1>Tymvora</h1>
       <div style="color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px;">
         Smart Time Tracking &amp; Workforce Productivity Platform
       </div>
@@ -60,8 +60,8 @@ def _base_template(title: str, body_html: str) -> str:
       {body_html}
     </div>
     <div class="footer">
-      <p>This email was sent by HourHive for <strong>gNxt Systems</strong>.</p>
-      <p>© 2024 gNxt Systems. All rights reserved.</p>
+        <p>This email was sent by Tymvora.</p>
+        <p>© 2026 Tymvora. All rights reserved.</p>
     </div>
   </div>
 </body>
@@ -71,7 +71,7 @@ def _base_template(title: str, body_html: str) -> str:
 
 async def send_welcome_email(to_email: str, full_name: str, temp_password: str) -> None:
     body = f"""
-<h2>Welcome to HourHive, {full_name}!</h2>
+<h2>Welcome to Tymvora, {full_name}!</h2>
 <p>Your account has been created. Please use the credentials below to log in and <strong>change your password immediately</strong>.</p>
 <table class="summary">
   <tr><th>Email</th><td>{to_email}</td></tr>
@@ -80,13 +80,13 @@ async def send_welcome_email(to_email: str, full_name: str, temp_password: str) 
 <a href="{settings.FRONTEND_URL}/login" class="btn">Log In Now</a>
 <p style="color:#64748B;font-size:13px;">If you did not request this account, please contact your administrator.</p>
 """
-    await _send(to_email, "Welcome to HourHive – Your Account is Ready", _base_template("Welcome", body))
+    await _send(to_email, "Welcome to Tymvora – Your Account is Ready", _base_template("Welcome", body))
 
 
 async def send_otp_email(to_email: str, full_name: str, otp: str) -> None:
     body = f"""
 <h2>Password Reset OTP</h2>
-<p>Hi {full_name}, we received a request to reset your HourHive password.</p>
+<p>Hi {full_name}, we received a request to reset your Tymvora password.</p>
 <p>Use the OTP below to verify your identity and set a new password.</p>
 <div style="margin: 28px 0; text-align: center;">
   <div style="display: inline-block; background: #EFF6FF; border: 2px dashed #2563EB;
@@ -108,7 +108,7 @@ async def send_otp_email(to_email: str, full_name: str, otp: str) -> None:
   If you did not request a password reset, please ignore this email.
 </p>
 """
-    await _send(to_email, "HourHive – Password Reset OTP", _base_template("Reset OTP", body))
+    await _send(to_email, "Tymvora – Password Reset OTP", _base_template("Reset OTP", body))
 
 
 async def send_approval_email(to_email: str, full_name: str, week_label: str, total_hours: float) -> None:
@@ -121,7 +121,7 @@ async def send_approval_email(to_email: str, full_name: str, week_label: str, to
 </table>
 <a href="{settings.FRONTEND_URL}/timesheets" class="btn">View Timesheets</a>
 """
-    await _send(to_email, "HourHive – Timesheet Approved", _base_template("Approved", body))
+    await _send(to_email, "Tymvora – Timesheet Approved", _base_template("Approved", body))
 
 
 async def send_rejection_email(to_email: str, full_name: str, week_label: str, comment: str) -> None:
@@ -134,7 +134,7 @@ async def send_rejection_email(to_email: str, full_name: str, week_label: str, c
 <p>Please update your timesheet and resubmit.</p>
 <a href="{settings.FRONTEND_URL}/timesheets" class="btn">Update Timesheet</a>
 """
-    await _send(to_email, "HourHive – Timesheet Rejected", _base_template("Rejected", body))
+    await _send(to_email, "Tymvora – Timesheet Rejected", _base_template("Rejected", body))
 
 
 async def send_daily_reminder(to_email: str, full_name: str) -> None:
@@ -144,7 +144,7 @@ async def send_daily_reminder(to_email: str, full_name: str) -> None:
 <p>Accurate time tracking helps the team plan better and ensures you get credit for all your work.</p>
 <a href="{settings.FRONTEND_URL}/timesheets/entry" class="btn">Log Today's Hours</a>
 """
-    await _send(to_email, "HourHive – Log Your Hours Today", _base_template("Reminder", body))
+    await _send(to_email, "Tymvora – Log Your Hours Today", _base_template("Reminder", body))
 
 
 async def send_weekly_reminder(to_email: str, full_name: str, week_label: str, hours_logged: float) -> None:
@@ -157,7 +157,7 @@ async def send_weekly_reminder(to_email: str, full_name: str, week_label: str, h
 <p>Please submit your timesheet before the deadline.</p>
 <a href="{settings.FRONTEND_URL}/timesheets" class="btn">Submit Timesheet</a>
 """
-    await _send(to_email, "HourHive – Please Submit Your Weekly Timesheet", _base_template("Weekly", body))
+    await _send(to_email, "Tymvora – Please Submit Your Weekly Timesheet", _base_template("Weekly", body))
 
 
 async def _send(to: str, subject: str, html_body: str) -> None:

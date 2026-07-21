@@ -15,8 +15,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="HourHive API",
-    description="Smart Time Tracking & Workforce Productivity Platform – gNxt Systems",
+    title="Tymvora API",
+    description="Smart Time Tracking & Workforce Productivity Platform",
     version="1.0.0",
     lifespan=lifespan,
 )

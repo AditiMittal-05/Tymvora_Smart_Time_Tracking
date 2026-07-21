@@ -305,7 +305,7 @@ function CreateUserDialog({ open, onClose, onSubmit, loading }) {
           {/* Email */}
           <div className="space-y-1.5">
             <Label className="text-sm font-semibold">Email *</Label>
-            <Input type="email" placeholder="john@gnxtsystems.com" {...register("email")} />
+            <Input type="email" placeholder="john@tymvora.com" {...register("email")} />
             {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
           </div>
 
@@ -438,7 +438,7 @@ function EditUserDialog({ open, onClose, onSubmit, loading, defaultValues }) {
 
           <div className="space-y-1.5">
             <Label className="text-sm font-semibold">Email *</Label>
-            <Input type="email" placeholder="john@gnxtsystems.com" {...register("email")} />
+            <Input type="email" placeholder="john@tymvora.com" {...register("email")} />
             {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
           </div>
 

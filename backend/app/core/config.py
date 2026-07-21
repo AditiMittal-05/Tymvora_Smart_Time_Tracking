@@ -5,7 +5,7 @@ from typing import List
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    APP_NAME: str = "HourHive"
+    APP_NAME: str = "Tymvora"
     APP_ENV: str = "development"
 
     SECRET_KEY: str = "change-me-in-production-must-be-32-chars-min"
@@ -13,15 +13,15 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    DATABASE_URL: str = "mysql+pymysql://root:password@localhost:3306/hourhive"
+    DATABASE_URL: str = "mysql+pymysql://root:password@localhost:3306/tymvora"
     DB_ECHO: bool = False
 
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
 
     MAIL_USERNAME: str = ""
     MAIL_PASSWORD: str = ""
-    MAIL_FROM: str = "noreply@gnxtsystems.com"
-    MAIL_FROM_NAME: str = "HourHive - gNxt Systems"
+    MAIL_FROM: str = "noreply@tymvora.com"
+    MAIL_FROM_NAME: str = "Tymvora"
     MAIL_PORT: int = 587
     MAIL_SERVER: str = "smtp.gmail.com"
     MAIL_STARTTLS: bool = True

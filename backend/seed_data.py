@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HourHive Enterprise Demo Seed Script
+Tymvora Enterprise Demo Seed Script
 511 users | 55 projects | 20 activities | 26 weeks timesheets
 Run: cd backend && python seed_data.py
 """
@@ -12,7 +12,7 @@ import bcrypt
 
 # ── Config ────────────────────────────────────────────────────────────────────
 DB = dict(host="localhost", port=3306, user="root", password="root",
-          db="hourhive", charset="utf8mb4", autocommit=False)
+          db="tymvora", charset="utf8mb4", autocommit=False)
 random.seed(42)
 NOW   = datetime.now(timezone.utc).replace(tzinfo=None)
 TODAY = date.today()
@@ -100,9 +100,9 @@ def gen_name():
 
 def gen_email(f, l):
     base = f"{f.lower()}.{l.lower()}"
-    e, i = f"{base}@gnxtsystems.com", 1
+    e, i = f"{base}@tymvora.com", 1
     while e in used_emails:
-        e = f"{base}{i}@gnxtsystems.com"; i += 1
+        e = f"{base}{i}@tymvora.com"; i += 1
     used_emails.add(e)
     return e
 
@@ -416,7 +416,7 @@ NOTIF_SUBJECTS = {
                   "Timesheet returned — please review comments"],
     "daily_reminder": ["Don't forget to log your hours today",
                        "Daily timesheet reminder — {date}"],
-    "welcome": ["Welcome to HourHive!", "Your HourHive account is ready"],
+    "welcome": ["Welcome to Tymvora!", "Your Tymvora account is ready"],
 }
 
 IP_POOL = [f"192.168.{random.randint(1,10)}.{random.randint(1,254)}" for _ in range(30)]
@@ -479,8 +479,8 @@ def seed_departments(cur, sa_id):
 
 def seed_system_config(cur, sa_id):
     rows = [
-        ("APP_NAME","HourHive","Application display name",sa_id),
-        ("COMPANY_NAME","gNxt Systems Pvt. Ltd.","Company legal name",sa_id),
+        ("APP_NAME","Tymvora","Application display name",sa_id),
+        ("COMPANY_NAME","Tymvora Pvt. Ltd.","Company legal name",sa_id),
         ("MAX_DAILY_HOURS","12","Maximum hours an employee can log per day",sa_id),
         ("BACKDATED_DAYS_LIMIT","7","Days in the past employees can fill timesheets",sa_id),
         ("REQUIRE_DESCRIPTION","true","Whether description is mandatory on entries",sa_id),
@@ -488,7 +488,7 @@ def seed_system_config(cur, sa_id):
         ("FISCAL_YEAR_START","04","Month number when fiscal year begins",sa_id),
         ("DEFAULT_WORK_HOURS","8","Standard working hours per day",sa_id),
         ("TIMESHEET_REMINDER_HOUR","18","Hour (24h) to send daily reminder",sa_id),
-        ("ADMIN_EMAIL","admin@gnxtsystems.com","Primary admin contact email",sa_id),
+        ("ADMIN_EMAIL","admin@tymvora.com","Primary admin contact email",sa_id),
     ]
     cur.executemany(
         "INSERT IGNORE INTO system_config (config_key,config_value,description,updated_by,updated_at) "
@@ -504,7 +504,7 @@ def seed_users(cur, sa_id):
     admin_ids = []
     for i in range(1, 11):
         n, f, l = gen_name()
-        e = f"manager{i:02d}@gnxtsystems.com"
+        e = f"manager{i:02d}@tymvora.com"
         used_emails.add(e)
         dept = random.choice(["Engineering","QA","Management","DevOps"])
         desig = "Tech Lead" if dept == "Engineering" else "Manager"
@@ -848,8 +848,8 @@ def seed_notifications(cur, emp_data, admin_ids):
     for emp in active_emps:
         rows.append((
             emp["id"], "welcome",
-            "Welcome to HourHive!",
-            "Your HourHive account has been set up. Start logging your time today.",
+            "Welcome to Tymvora!",
+            "Your Tymvora account has been set up. Start logging your time today.",
             True, NOW - timedelta(days=random.randint(30,180)),
             NOW - timedelta(days=random.randint(1,30))
         ))
@@ -930,7 +930,7 @@ def seed_audit_logs(cur, admin_ids, emp_data, sa_id):
             None,
             json.dumps({"email": emp["email"], "role": "employee", "department": emp["dept"]}),
             random.choice(IP_POOL),
-            "Mozilla/5.0 (Windows NT 10.0) HourHive/1.0",
+            "Mozilla/5.0 (Windows NT 10.0) Tymvora/1.0",
             NOW - timedelta(days=random.randint(30,365))
         ))
 
@@ -941,7 +941,7 @@ def seed_audit_logs(cur, admin_ids, emp_data, sa_id):
                 emp["id"], "Auth", emp["id"], "LOGIN",
                 None, json.dumps({"status": "success"}),
                 random.choice(IP_POOL),
-                "Mozilla/5.0 (Windows NT 10.0) Chrome/120 HourHive/1.0",
+                "Mozilla/5.0 (Windows NT 10.0) Chrome/120 Tymvora/1.0",
                 NOW - timedelta(days=random.randint(0,30), hours=random.randint(0,23))
             ))
 
@@ -963,7 +963,7 @@ def seed_audit_logs(cur, admin_ids, emp_data, sa_id):
             sa_id, "User", random.randint(1, len(active_emps)), "UPDATE",
             json.dumps({"status": "active"}),
             json.dumps({"status": "inactive"}),
-            random.choice(IP_POOL), "HourHive-Admin/1.0",
+            random.choice(IP_POOL), "Tymvora-Admin/1.0",
             NOW - timedelta(days=random.randint(1,90))
         ))
 
@@ -972,7 +972,7 @@ def seed_audit_logs(cur, admin_ids, emp_data, sa_id):
         rows.append((
             sa_id, "Project", i+1, "CREATE",
             None, json.dumps({"project_code": code, "project_name": name}),
-            random.choice(IP_POOL), "HourHive-Admin/1.0",
+            random.choice(IP_POOL), "Tymvora-Admin/1.0",
             NOW - timedelta(days=random.randint(60,365))
         ))
 
@@ -998,7 +998,7 @@ def seed_audit_logs(cur, admin_ids, emp_data, sa_id):
 
 def main():
     print("=" * 60)
-    print("  HourHive Enterprise Seed Script")
+    print("  Tymvora Enterprise Seed Script")
     print("=" * 60)
     print("\nHashing passwords (this takes ~5 seconds)…")
 
@@ -1106,8 +1106,8 @@ def main():
         print()
         print("  Login credentials:")
         print("  Super Admin : (existing super admin account)")
-        print("  Manager     : manager01@gnxtsystems.com  /  Admin@123456")
-        print("  Employee    : <firstname>.<lastname>@gnxtsystems.com  /  Employee@123")
+        print("  Manager     : manager01@tymvora.com  /  Admin@123456")
+        print("  Employee    : <firstname>.<lastname>@tymvora.com  /  Employee@123")
         print("=" * 60)
 
     except Exception as exc:

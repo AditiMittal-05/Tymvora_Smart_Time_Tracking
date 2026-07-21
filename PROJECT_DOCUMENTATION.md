@@ -1,4 +1,4 @@
-# HourHive — Complete Product Documentation
+# Tymvora — Complete Product Documentation
 
 > **Version**: 1.0.0 | **Last Updated**: July 2026 | **Stack**: FastAPI · React 19 · MySQL 8
 
@@ -37,11 +37,11 @@
 
 ## 1. Product Overview
 
-**HourHive** is an enterprise-grade Time Tracking & Workforce Productivity Platform built for organisations that need accurate logging of employee work hours against projects and activities, with a manager-driven weekly approval workflow.
+**Tymvora** is an enterprise-grade Time Tracking & Workforce Productivity Platform built for organisations that need accurate logging of employee work hours against projects and activities, with a manager-driven weekly approval workflow.
 
 ### Core Value Proposition
 
-| Problem | HourHive Solution |
+| Problem | Tymvora Solution |
 |---|---|
 | Employees forget to log time | Daily entry UI + scheduled email reminders |
 | Hours logged to wrong projects | Project & activity master controlled by admin |
@@ -64,7 +64,7 @@ Export   : openpyxl (Excel) · reportlab (PDF)
 
 ## 2. User Roles & Permissions
 
-HourHive uses a **two-role model** augmented by a per-user **permission flag**.
+Tymvora uses a **two-role model** augmented by a per-user **permission flag**.
 
 ### Roles
 
@@ -1191,4 +1191,4 @@ Expose a read-replica connection or a REST export endpoint that BI tools (Power 
 
 ---
 
-*End of HourHive Product Documentation*
+*End of Tymvora Product Documentation*

@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Clock, CheckCircle, BarChart3, Shield, Zap } from "lucide-react";
+import { TymvoraLogo } from "@/components/shared/TymvoraLogo";
 
 const features = [
   { icon: Clock,       text: "Real-time time tracking",       sub: "Log hours with precision" },
@@ -45,18 +46,13 @@ export function AuthLayout() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="relative z-10"
         >
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #2563EB, #10B981)", boxShadow: "0 4px 20px rgba(37,99,235,0.4)" }}>
-              <span className="text-xl leading-none">🐝</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-white tracking-tight">HourHive</h1>
-              <p className="text-[10px] font-medium"
-                style={{ background: "linear-gradient(90deg,#60A5FA,#34D399)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-                by gNxt Systems
-              </p>
-            </div>
+          <div className="mb-1">
+            <TymvoraLogo
+              className="items-center"
+              textClassName="text-white font-semibold"
+              markClassName="scale-110"
+              subtitle="Enterprise Time Intelligence"
+            />
           </div>
         </motion.div>
 
@@ -124,7 +120,7 @@ export function AuthLayout() {
         {/* Footer */}
         <div className="relative z-10">
           <p className="text-white/25 text-xs">
-            © {new Date().getFullYear()} gNxt Systems Pvt. Ltd. All rights reserved.
+            © {new Date().getFullYear()} Tymvora Technologies Pvt. Ltd. All rights reserved.
           </p>
         </div>
       </div>
@@ -136,16 +132,14 @@ export function AuthLayout() {
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="lg:hidden flex items-center gap-3 mb-8"
+          className="lg:hidden mb-8"
         >
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #2563EB, #10B981)" }}>
-            <span className="text-xl leading-none">🐝</span>
-          </div>
-          <div>
-            <h1 className="text-base font-bold text-text-primary">HourHive</h1>
-            <p className="text-[10px] text-text-secondary">Smart Workforce Platform</p>
-          </div>
+          <TymvoraLogo
+            className="items-center"
+            textClassName="text-text-primary"
+            markClassName="scale-100"
+            subtitle="Smart Workforce Platform"
+          />
         </motion.div>
 
         <motion.div
@@ -159,7 +153,7 @@ export function AuthLayout() {
             <Outlet />
           </div>
           <p className="text-center text-xs text-text-muted mt-6">
-            Secured by gNxt Systems · Enterprise Grade
+            Secured by Tymvora Technologies · Enterprise Grade
           </p>
         </motion.div>
       </div>

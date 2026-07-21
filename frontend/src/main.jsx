@@ -7,7 +7,7 @@ import "./index.css";
 // Apply saved theme before first render to avoid flash
 (function () {
   try {
-    const stored = JSON.parse(localStorage.getItem("hourhive-theme") || "{}");
+    const stored = JSON.parse(localStorage.getItem("tymvora-theme") || "{}");
     const t = stored?.state?.theme || "light";
     const resolved = t === "dark" ? "dark" : t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", resolved);

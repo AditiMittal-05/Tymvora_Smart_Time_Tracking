@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find .claude/skills -iname \"SKILL.md\")",
+      "Bash(ls .claude/skills)"
+    ]
+  }
+}

@@ -70,73 +70,73 @@ PWD_MGR  = bcrypt.hashpw(b"Manager@123",  bcrypt.gensalt()).decode()
 
 EMPLOYEES_DEF = [
     # ── Level 1 ──────────────────────────────────────────────────────────────
-    ("DEMO001","Rajesh Sharma",      "rajesh.sharma@gnxtsystems.com",
+    ("DEMO001","Rajesh Sharma",      "rajesh.sharma@tymvora.com",
      "Engineering","VP Engineering",         "+919876543210", 1, None,          True,  PWD_MGR),
 
-    ("DEMO002","Priya Nair",         "priya.nair@gnxtsystems.com",
+    ("DEMO002","Priya Nair",         "priya.nair@tymvora.com",
      "HR",         "HR Director",            "+919876543211", 1, None,          True,  PWD_MGR),
 
-    ("DEMO003","Sanjay Mehta",       "sanjay.mehta@gnxtsystems.com",
+    ("DEMO003","Sanjay Mehta",       "sanjay.mehta@tymvora.com",
      "Finance",    "Finance Director",       "+919876543212", 1, None,          True,  PWD_MGR),
 
     # ── Level 2 ──────────────────────────────────────────────────────────────
-    ("DEMO004","Neha Gupta",         "neha.gupta@gnxtsystems.com",
+    ("DEMO004","Neha Gupta",         "neha.gupta@tymvora.com",
      "Engineering","Engineering Manager",    "+919876543213", 2, "DEMO001",     True,  PWD_MGR),
 
-    ("DEMO005","Amit Singh",         "amit.singh@gnxtsystems.com",
+    ("DEMO005","Amit Singh",         "amit.singh@tymvora.com",
      "QA",         "QA Lead",                "+919876543214", 2, "DEMO001",     True,  PWD_MGR),
 
-    ("DEMO006","Kavya Patel",        "kavya.patel@gnxtsystems.com",
+    ("DEMO006","Kavya Patel",        "kavya.patel@tymvora.com",
      "Product",    "Senior Product Manager", "+919876543215", 2, "DEMO001",     True,  PWD_MGR),
 
-    ("DEMO007","Rahul Verma",        "rahul.verma@gnxtsystems.com",
+    ("DEMO007","Rahul Verma",        "rahul.verma@tymvora.com",
      "DevOps",     "DevOps Lead",            "+919876543216", 2, "DEMO001",     True,  PWD_MGR),
 
-    ("DEMO008","Pooja Agarwal",      "pooja.agarwal@gnxtsystems.com",
+    ("DEMO008","Pooja Agarwal",      "pooja.agarwal@tymvora.com",
      "HR",         "HR Business Partner",    "+919876543217", 2, "DEMO002",     True,  PWD_MGR),
 
     # ── Level 3 ──────────────────────────────────────────────────────────────
-    ("DEMO009","Arjun Kumar",        "arjun.kumar@gnxtsystems.com",
+    ("DEMO009","Arjun Kumar",        "arjun.kumar@tymvora.com",
      "Engineering","Senior Software Engineer","+919876543218",3, "DEMO004",     False, PWD_HASH),
 
-    ("DEMO010","Divya Joshi",        "divya.joshi@gnxtsystems.com",
+    ("DEMO010","Divya Joshi",        "divya.joshi@tymvora.com",
      "QA",         "Senior QA Engineer",     "+919876543219", 3, "DEMO005",     False, PWD_HASH),
 
-    ("DEMO011","Akash Chauhan",      "akash.chauhan@gnxtsystems.com",
+    ("DEMO011","Akash Chauhan",      "akash.chauhan@tymvora.com",
      "DevOps",     "Senior DevOps Engineer", "+919876543220", 3, "DEMO007",     False, PWD_HASH),
 
-    ("DEMO012","Shreya Bansal",      "shreya.bansal@gnxtsystems.com",
+    ("DEMO012","Shreya Bansal",      "shreya.bansal@tymvora.com",
      "Product",    "Product Manager",        "+919876543221", 3, "DEMO006",     False, PWD_HASH),
 
-    ("DEMO013","Rohit Sinha",        "rohit.sinha@gnxtsystems.com",
+    ("DEMO013","Rohit Sinha",        "rohit.sinha@tymvora.com",
      "Finance",    "Senior Finance Analyst", "+919876543222", 3, "DEMO003",     False, PWD_HASH),
 
-    ("DEMO014","Sneha Dubey",        "sneha.dubey@gnxtsystems.com",
+    ("DEMO014","Sneha Dubey",        "sneha.dubey@tymvora.com",
      "Engineering","Senior Software Engineer","+919876543223",3, "DEMO004",     False, PWD_HASH),
 
-    ("DEMO015","Vikram Rathore",     "vikram.rathore@gnxtsystems.com",
+    ("DEMO015","Vikram Rathore",     "vikram.rathore@tymvora.com",
      "Sales",      "Sales Manager",          "+919876543224", 3, None,          True,  PWD_MGR),
 
     # ── Level 4 ──────────────────────────────────────────────────────────────
-    ("DEMO016","Ananya Mishra",      "ananya.mishra@gnxtsystems.com",
+    ("DEMO016","Ananya Mishra",      "ananya.mishra@tymvora.com",
      "Engineering","Software Engineer",      "+919876543225", 4, "DEMO009",     False, PWD_HASH),
 
-    ("DEMO017","Yash Kulkarni",      "yash.kulkarni@gnxtsystems.com",
+    ("DEMO017","Yash Kulkarni",      "yash.kulkarni@tymvora.com",
      "Engineering","Junior Software Engineer","+919876543226",4, "DEMO009",     False, PWD_HASH),
 
-    ("DEMO018","Tanisha Kapoor",     "tanisha.kapoor@gnxtsystems.com",
+    ("DEMO018","Tanisha Kapoor",     "tanisha.kapoor@tymvora.com",
      "QA",         "QA Engineer",            "+919876543227", 4, "DEMO010",     False, PWD_HASH),
 
-    ("DEMO019","Gaurav Yadav",       "gaurav.yadav@gnxtsystems.com",
+    ("DEMO019","Gaurav Yadav",       "gaurav.yadav@tymvora.com",
      "DevOps",     "DevOps Engineer",        "+919876543228", 4, "DEMO011",     False, PWD_HASH),
 
-    ("DEMO020","Meera Saxena",       "meera.saxena@gnxtsystems.com",
+    ("DEMO020","Meera Saxena",       "meera.saxena@tymvora.com",
      "Finance",    "Finance Analyst",        "+919876543229", 4, "DEMO013",     False, PWD_HASH),
 ]
 
 # 5 demo projects  (manager will be wired to DEMO001 / DEMO004 etc. after insert)
 DEMO_PROJECTS = [
-    ("DPRJ01","HourHive Platform",      "gNxt Systems",      "2024-06-01", None,         "active",
+    ("DPRJ01","Tymvora Platform",      "Tymvora",      "2024-06-01", None,         "active",
      "DEMO001","Core time-tracking SaaS platform development"),
     ("DPRJ02","Client Portal Redesign", "Reliance Industries","2025-01-01","2025-12-31","active",
      "DEMO004","UX overhaul of the client self-service portal"),

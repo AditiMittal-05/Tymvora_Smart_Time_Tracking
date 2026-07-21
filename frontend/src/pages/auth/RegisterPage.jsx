@@ -47,7 +47,7 @@ export function RegisterPage() {
     },
     onSuccess: ({ tokens, user }) => {
       setAuth(user, tokens.access_token, tokens.refresh_token);
-      toast.success("Account created!", `Welcome to HourHive, ${user.full_name}`);
+      toast.success("Account created!", `Welcome to Tymvora, ${user.full_name}`);
       navigate("/dashboard");
     },
     onError: (err) => {
@@ -66,7 +66,7 @@ export function RegisterPage() {
       <div className="mb-7">
         <h2 className="text-2xl font-bold text-text-primary tracking-tight">Create account</h2>
         <p className="text-text-secondary text-sm mt-1.5">
-          Join your team on HourHive
+          Join your team on Tymvora
         </p>
       </div>
 
@@ -101,7 +101,7 @@ export function RegisterPage() {
             <Input
               id="email"
               type="email"
-              placeholder="you@gnxtsystems.com"
+              placeholder="you@tymvora.com"
               className="pl-10 h-10"
               {...register("email")}
             />

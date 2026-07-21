@@ -10,6 +10,7 @@ import { useProfileStore } from "@/store/profile.store";
 import { useAdminProfileStore } from "@/store/admin-profile.store";
 import { useThemeStore } from "@/store/theme.store";
 import { cn } from "@/utils/cn";
+import { TymvoraLogo } from "@/components/shared/TymvoraLogo";
 
 const breadcrumbMap = {
   "/dashboard": "Dashboard",
@@ -43,7 +44,7 @@ export function TopNavbar({ onMenuToggle }) {
   const { theme, setTheme } = useThemeStore();
   const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
-  const pageTitle = breadcrumbMap[location.pathname] || "HourHive";
+  const pageTitle = breadcrumbMap[location.pathname] || "Tymvora";
   const initials = user?.full_name
     ? user.full_name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
     : "U";
@@ -91,7 +92,7 @@ export function TopNavbar({ onMenuToggle }) {
 
       {/* Breadcrumb */}
       <div className="flex items-center gap-1.5 text-sm min-w-0">
-        <span className="text-white/30 font-medium hidden sm:block tracking-wide">HourHive</span>
+        <span className="text-white/30 font-medium hidden sm:block tracking-wide">Tymvora</span>
         <ChevronRight className="h-3.5 w-3.5 text-white/20 hidden sm:block flex-shrink-0" />
         <span className="font-semibold text-white/90 truncate">{pageTitle}</span>
       </div>

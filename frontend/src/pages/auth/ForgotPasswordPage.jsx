@@ -224,7 +224,7 @@ export function ForgotPasswordPage() {
             <Input
               id="email"
               type="email"
-              placeholder="you@gnxtsystems.com"
+              placeholder="you@tymvora.com"
               className="pl-10"
               {...emailForm.register("email")}
             />

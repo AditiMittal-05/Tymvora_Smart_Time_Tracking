@@ -1341,7 +1341,7 @@ export default function ProfilePage() {
         {tab === "appearance" && (
           <motion.div key="ap" initial={{ opacity:0,y:12 }} animate={{ opacity:1,y:0 }} exit={{ opacity:0,y:-8 }} transition={{ duration:0.22 }} className="space-y-3 pb-3">
             <Card>
-              <CardHeader icon={Palette} title="Theme" subtitle="Choose how HourHive looks for you" accent="#2563EB" />
+              <CardHeader icon={Palette} title="Theme" subtitle="Choose how Tymvora looks for you" accent="#2563EB" />
               <div className="p-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                   {[
@@ -1553,7 +1553,7 @@ export default function ProfilePage() {
         {tab === "preferences" && (
           <motion.div key="pr" initial={{ opacity:0,y:12 }} animate={{ opacity:1,y:0 }} exit={{ opacity:0,y:-8 }} transition={{ duration:0.22 }} className="space-y-3 pb-3">
             <Card>
-              <CardHeader icon={Bell} title="Notification Preferences" subtitle="Control what HourHive notifies you about" accent="#2563EB" />
+              <CardHeader icon={Bell} title="Notification Preferences" subtitle="Control what Tymvora notifies you about" accent="#2563EB" />
               <div className="p-4">
                 <ToggleSwitch label="Email digest" description="Daily summary email of your activity" checked={prefs.emailDigest} onChange={(v) => setPref("emailDigest",v)} />
                 <ToggleSwitch label="Time entry reminders" description="Get reminded to log time at end of day" checked={prefs.timeReminder} onChange={(v) => setPref("timeReminder",v)} />

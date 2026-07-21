@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HourHive — Demo Data Cleanup
+Tymvora — Demo Data Cleanup
 Preserves: table structure, alembic_version, super_admin account
 Removes:   all demo/test data and resets AUTO_INCREMENT
 """
@@ -17,7 +17,7 @@ def run(cur, sql, label=""):
 
 def main():
     print("=" * 60)
-    print("  HourHive Demo Data Cleanup")
+    print("  Tymvora Demo Data Cleanup")
     print("=" * 60)
 
     c = pymysql.connect(**DB)

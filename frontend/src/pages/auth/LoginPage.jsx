@@ -58,7 +58,7 @@ export function LoginPage() {
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-text-primary tracking-tight">Welcome back</h2>
         <p className="text-text-secondary text-sm mt-1.5">
-          Sign in to your HourHive account
+          Sign in to your Tymvora account
         </p>
       </div>
 
@@ -73,7 +73,7 @@ export function LoginPage() {
             <Input
               id="email"
               type="email"
-              placeholder="you@gnxtsystems.com"
+              placeholder="you@tymvora.com"
               className="pl-10 h-10"
               {...register("email")}
             />
@@ -129,7 +129,7 @@ export function LoginPage() {
           loading={loginMutation.isPending}
         >
           <LogIn className="h-4 w-4" />
-          Sign In to HourHive
+          Sign In to Tymvora
         </Button>
       </form>
 

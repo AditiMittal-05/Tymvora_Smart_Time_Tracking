@@ -1,89 +1,94 @@
+<<<<<<< HEAD
 # ⏱️ Tymvora
+=======
+# ⏱️ Tymvora Timesheet Management System
+
+>>>>>>> 31227b8 (Rebrand project from HourHive to Tymvora Timesheet Management System and update git metadata)
 Tymvora is a full-stack modern Timesheet Management System for employee effort tracking, project monitoring, timesheet approvals, workflow management, dashboards, and productivity analytics.
 
 ## 🚀 Features
 
 ### Employee Module
 
-* Secure Login & Authentication
-* Change Password
-* Daily & Weekly Timesheet Entry
-* Draft Save & Auto Save
-* Submit Timesheets for Approval
-* View Timesheet History
-* View Personal Reports
-* Copy Previous Day Entries
+- Secure Login & Authentication
+- Change Password
+- Daily & Weekly Timesheet Entry
+- Draft Save & Auto Save
+- Submit Timesheets for Approval
+- View Timesheet History
+- View Personal Reports
+- Copy Previous Day Entries
 
 ### Admin Module
 
-* User Management
-* Project Management
-* Activity Management
-* Review Submitted Timesheets
-* Approve / Reject Timesheets
-* Unlock Approved Timesheets
-* Access Organization Reports
+- User Management
+- Project Management
+- Activity Management
+- Review Submitted Timesheets
+- Approve / Reject Timesheets
+- Unlock Approved Timesheets
+- Access Organization Reports
 
 ### Timesheet Management
 
-* Weekly Timesheet View
-* 15-Minute Time Entry Granularity
-* Configurable Backdated Entries
-* Daily Hours Validation
-* Draft → Submitted → Approved Workflow
-* Rejected Timesheet Resubmission
+- Weekly Timesheet View
+- 15-Minute Time Entry Granularity
+- Configurable Backdated Entries
+- Daily Hours Validation
+- Draft → Submitted → Approved Workflow
+- Rejected Timesheet Resubmission
 
 ### Reports & Analytics
 
-* Employee Daily Report
-* Employee Monthly Summary
-* Project Effort Report
-* Activity-wise Report
-* Missing Timesheet Report
-* Month-to-Month Employee Comparison
-* Project Trend Analysis
-* Productivity Dashboards
+- Employee Daily Report
+- Employee Monthly Summary
+- Project Effort Report
+- Activity-wise Report
+- Missing Timesheet Report
+- Month-to-Month Employee Comparison
+- Project Trend Analysis
+- Productivity Dashboards
 
 ### Notifications
 
-* Daily Timesheet Reminders
-* Weekly Submission Reminders
-* Approval & Rejection Notifications
+- Daily Timesheet Reminders
+- Weekly Submission Reminders
+- Approval & Rejection Notifications
 
 ### Security
 
-* Role-Based Access Control (RBAC)
-* Secure Authentication
-* Session Timeout Management
-* Audit Trail Tracking
+- Role-Based Access Control (RBAC)
+- Secure Authentication
+- Session Timeout Management
+- Audit Trail Tracking
 
 ## 🛠️ Tech Stack
 
 ### Frontend
 
-* React.js
-* HTML5
-* CSS3
-* JavaScript
+- React.js
+- HTML5
+- CSS3
+- JavaScript
 
 ### Backend
 
-* Node.js
-* Express.js
+- Node.js
+- Express.js
 
 ### Database
 
-* MySQL
+- MySQL
 
 ### Authentication
 
-* JWT Authentication
-* Secure Password Hashing
+- JWT Authentication
+- Secure Password Hashing
 
 ## 📂 Project Structure
 
 ```bash
-HourHive/
+Tymvora/
 │
 ├── frontend/
 ├── backend/
@@ -116,23 +121,30 @@ Resubmitted
 
 ## 🎯 Key Objectives
 
-* Simplify employee timesheet submission
-* Improve project effort visibility
-* Streamline approval workflows
-* Provide actionable productivity insights
-* Generate detailed management reports
+- Simplify employee timesheet submission
+- Improve project effort visibility
+- Streamline approval workflows
+- Provide actionable productivity insights
+- Generate detailed management reports
 
 ## 🔮 Future Enhancements
 
-* Payroll Integration
-* Leave Management Integration
-* Resource Planning
-* Project Costing
+- Payroll Integration
+- Leave Management Integration
+- Resource Planning
+- Project Costing
 
 ## 📄 License
 
 This project is developed for learning and organizational productivity management purposes.
 
 ## Author
+
 Developed by Aditi Mittal
+<<<<<<< HEAD
 * Full Stack Developer
+=======
+
+- Mobile Application
+- Advanced Analytics
+>>>>>>> 31227b8 (Rebrand project from HourHive to Tymvora Timesheet Management System and update git metadata)
