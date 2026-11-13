@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-# ⏱️ Tymvora
-=======
-# ⏱️ Tymvora Timesheet Management System
+# ⏱️ Tymvora Smart Time Tracking
 
->>>>>>> 31227b8 (Rebrand project from HourHive to Tymvora Timesheet Management System and update git metadata)
 Tymvora is a full-stack modern Timesheet Management System for employee effort tracking, project monitoring, timesheet approvals, workflow management, dashboards, and productivity analytics.
 
 ## 🚀 Features
@@ -141,10 +137,5 @@ This project is developed for learning and organizational productivity managemen
 ## Author
 
 Developed by Aditi Mittal
-<<<<<<< HEAD
-* Full Stack Developer
-=======
 
-- Mobile Application
-- Advanced Analytics
->>>>>>> 31227b8 (Rebrand project from HourHive to Tymvora Timesheet Management System and update git metadata)
+Full Stack Developer
